@@ -1,0 +1,25 @@
+
+Datacenter: DC1
+==========
+Address      Rack        Status State   Load            Owns                Token
+                                                                            141784319550391026443072753096570088005
+22.102.6.90  RAC1        Up     Normal  10.51 TiB       ?                   0
+22.102.6.96  RAC1        Up     Normal  10.72 TiB       ?                   28356863910078205288614550619314017521
+22.102.6.92  RAC1        Up     Normal  10.57 TiB       ?                   56713727820156410577229101238628035242
+22.102.6.86  RAC1        Up     Normal  10.58 TiB       ?                   85070591730234615865843651857942052763
+22.102.6.94  RAC1        Up     Normal  10.63 TiB       ?                   113427455640312821154458202477256070484
+22.102.6.88  RAC1        Up     Normal  10.66 TiB       ?                   141784319550391026443072753096570088005
+
+Datacenter: DC2
+==========
+Address      Rack        Status State   Load            Owns                Token
+                                                                            141784319550391026443072753096570088105
+22.102.6.97  RAC1        Up     Normal  10.66 TiB       ?                   100
+22.102.6.91  RAC1        Up     Normal  10.62 TiB       ?                   28356863910078205288614550619314017621
+22.102.6.87  RAC1        Up     Normal  10.58 TiB       ?                   56713727820156410577229101238628035342
+22.102.6.93  RAC1        Up     Normal  10.61 TiB       ?                   85070591730234615865843651857942052863
+22.102.6.89  RAC1        Up     Normal  10.63 TiB       ?                   113427455640312821154458202477256070584
+22.102.6.95  RAC1        Up     Normal  10.61 TiB       ?                   141784319550391026443072753096570088105
+
+
+  Note: Non-system keyspaces don't have the same replication settings, effective ownership information is meaningless

@@ -1,0 +1,24 @@
+Datacenter: dcA
+=============
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address      Load       Tokens  Owns    Host ID                               Rack
+UN  10.0.0.1     84.72 GB   1       ?       d9349432-1860-4dde-b7b5-7027badd2042  9
+UN  10.0.0.2     81.55 GB   1       ?       f2bbe1af-61cf-43cf-b28a-8fd298f03da2  17
+UN  10.0.0.3     106.61 GB  1       ?       2b8dec4e-3bd3-4f37-b598-32ff937563ee  19
+UN  10.0.0.4     56.72 GB   1       ?       0c67c379-4f96-4fcd-a9ab-d4ecb4d1ee22  17
+UN  10.0.0.5     95.17 GB   1       ?       70e10406-e7fc-4805-aa75-7eb4d2f2e5fb  20
+Datacenter: dcB
+=============
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address      Load       Tokens  Owns    Host ID                               Rack
+UN  10.1.0.1     73.36 GB   256     ?       80011c62-5377-4dba-99b2-8f05bc6eea10  9
+UN  10.1.0.2     78.68 GB   256     ?       3d038137-602a-4736-8631-386f35b48a1b  3
+UN  10.1.0.3     80.77 GB   256     ?       418e72f3-8e31-4be9-a1f2-4f1dee41acaf  2
+UN  10.1.0.4     71.34 GB   256     ?       d02cbdf2-c55f-4481-9973-fdaa6f274e61  1
+UN  10.1.0.5     70.29 GB   256     ?       f6db6749-61dd-450d-8806-8aba74949a0e  6
+
+Note: Non-system keyspaces don't have the same replication settings, effective ownership information is meaningless
+
+ nodetool rc=0

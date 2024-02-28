@@ -1,0 +1,112 @@
+/* Added for better printing support */
+/* Start headings off in a new page */
+
+h1 {
+  font-family: 'Sora', sans-serif;
+  color: #000000;
+  font-weight: bold;
+  font-size: 32px;
+}
+
+h2 {
+  font-family: 'Sora', sans-serif;
+  color: #000000;
+  font-weight: normal;
+  font-size: 24px;
+}
+
+h3 {
+  font-family: 'Sora', sans-serif;
+  color: #000000;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+h4 {
+  font-family: 'Sora', sans-serif;
+  color: #000000;
+  font-weight: normal;
+  font-size: 16px;
+}
+
+/* Don't page-break for the first two headings */
+#discovery, #purpose {page-break-before: avoid;}
+
+/* Keep tables and preformatted codeblocks intact, when possible */
+table, pre {page-break-inside: avoid;}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 14px;
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 1.5em;
+}
+
+/* header and footer areas */
+.menu { padding: 0; }
+.menu li { display: inline-block; }
+.article-meta, .menu a {
+  text-decoration: none;
+  background: #eee;
+  padding: 5px;
+  border-radius: 5px;
+}
+.menu, .article-meta, footer { text-align: center; }
+.title { font-size: 1.1em; }
+footer a { text-decoration: none; }
+hr {
+  border-style: solid;
+  color: #ddd;
+}
+
+/* code */
+pre {
+  font-family: 'Roboto Mono', monospace;
+  white-space: pre-wrap;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  font-size: 14px;
+}
+
+code {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}
+
+/* misc elements */
+img, iframe, video { max-width: 100%; }
+main {
+  hyphens: auto;
+  color: #1F2438;
+}
+blockquote {
+  background: #f9f9f9;
+  border-left: 5px solid #ccc;
+  padding: 3px 1em 3px;
+}
+
+table {
+  margin: auto;
+  margin-bottom: 25px;
+  margin-top: 25px;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+  width: 100%;
+  font-size: 12.5px;
+}
+table thead th { border-bottom: 1px solid #ddd; }
+th, td { padding: 5px; }
+thead, tfoot, tr:nth-child(even) { background: #eee }
+
+
+#discovery {
+  font-size: 60px;
+  text-transform: uppercase;
+  padding-top: 50px;
+  padding-bottom: 40px;
+  text-align: center;
+}

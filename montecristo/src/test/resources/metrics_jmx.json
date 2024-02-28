@@ -1,0 +1,147 @@
+{"beans" : [ {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=dse_leases,scope=leases,name=RangeTotalLatency",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxCounter",
+    "Count" : 16302037
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=Leasing,scope=ForbearanceJournal,name=CompressionMetadataOffHeapMemoryUsed",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 16
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=log,scope=logEntrySessionLogRef_201607,name=TombstoneScannedHistogram",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxHistogram",
+    "Count" : 0,
+    "Min" : 0,
+    "Mean" : 0.0,
+    "StdDev" : 0.0,
+    "95thPercentile" : 0.0,
+    "75thPercentile" : 0.0,
+    "50thPercentile" : 0.0,
+    "98thPercentile" : 0.0,
+    "99thPercentile" : 0.0,
+    "999thPercentile" : 0.0,
+    "Max" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=log,scope=logEntryUserSession,name=BloomFilterFalsePositives",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 41
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=log,scope=logEntrySessionLogRef_201603,name=BloomFilterFalsePositives",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Keyspace,keyspace=dse_system,name=ViewReadTime",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxTimer",
+    "Min" : 0.0,
+    "Mean" : 0.0,
+    "StdDev" : 0.0,
+    "95thPercentile" : 0.0,
+    "DurationUnit" : "microseconds",
+    "75thPercentile" : 0.0,
+    "50thPercentile" : 0.0,
+    "98thPercentile" : 0.0,
+    "99thPercentile" : 0.0,
+    "999thPercentile" : 0.0,
+    "Max" : 0.0,
+    "Count" : 0,
+    "FifteenMinuteRate" : 0.0,
+    "FiveMinuteRate" : 0.0,
+    "MeanRate" : 0.0,
+    "OneMinuteRate" : 0.0,
+    "RateUnit" : "events/second"
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Keyspace,keyspace=dse_perf,name=MemtableColumnsCount",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=log,scope=logEntrySessionLogRef_201602,name=CompressionMetadataOffHeapMemoryUsed",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 36712
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=log,scope=logEntrySessionLogRef_201611,name=BytesFlushed",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxCounter",
+    "Count" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=log,scope=logEntrySessionLogRef_201702,name=RowCacheMiss",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxCounter",
+    "Count" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=statistics,scope=statisticUserFunctionFamily_201803,name=MinRowSize",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 150
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=log,scope=logEntrySessionLogRef_201807,name=BloomFilterDiskSpaceUsed",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 516960
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=statistics,scope=statisticUserFunctionFamily_201806,name=MemtableColumnsCount",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=statistics,scope=middlewareLoginHitMetaStatistics,name=MeanPartitionSize",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ThreadPools,path=internal,scope=CacheCleanupExecutor,name=MaxPoolSize",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 1
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=statistics,scope=statisticUserFunctionFamily_202005,name=RowCacheHitOutOfRange",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxCounter",
+    "Count" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=esb,scope=UserTransaction,name=PercentRepaired",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0.0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=statistics,scope=statisticUserFunctionFamily_201805,name=LiveScannedHistogram",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxHistogram",
+    "Count" : 0,
+    "Min" : 0,
+    "Mean" : 0.0,
+    "StdDev" : 0.0,
+    "95thPercentile" : 0.0,
+    "75thPercentile" : 0.0,
+    "50thPercentile" : 0.0,
+    "98thPercentile" : 0.0,
+    "99thPercentile" : 0.0,
+    "999thPercentile" : 0.0,
+    "Max" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ThreadPools,path=internal,scope=HintsDispatcher,name=ActiveTasks",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=statistics,scope=statisticUserFunctionFamily_201710,name=RecentBloomFilterFalseRatio",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0.0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=statistics,scope=statisticUserFunctionFamily_201705,name=IndexSummaryOffHeapMemoryUsed",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 532
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=log,scope=logEntry,name=CasPrepareTotalLatency",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxCounter",
+    "Count" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=log,scope=logEntry_201401,name=MemtableLiveDataSize",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=Table,keyspace=log,scope=logEntrySessionLogRef_201304,name=MemtableColumnsCount",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxGauge",
+    "Value" : 0
+  }, {
+    "name" : "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=log,scope=logEntry_201404,name=SSTablesPerReadHistogram",
+    "modelerType" : "org.apache.cassandra.metrics.CassandraMetricsRegistry$JmxHistogram",
+    "Count" : 0,
+    "Min" : 0,
+    "Mean" : 0.0,
+    "StdDev" : 0.0,
+    "95thPercentile" : 0.0,
+    "75thPercentile" : 0.0,
+    "50thPercentile" : 0.0,
+    "98thPercentile" : 0.0,
+    "99thPercentile" : 0.0,
+    "999thPercentile" : 0.0,
+    "Max" : 0
+  }]}

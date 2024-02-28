@@ -1,0 +1,49 @@
+/10.201.101.11
+  generation:1612419713
+  heartbeat:5988335
+  STATUS:50:NORMAL,-1014387098268598729
+  LOAD:5988316:1.834886951853E12
+  SCHEMA:5921023:fa06910e-28e5-3417-a381-096278de01f8
+  DC:60:AUSTIN
+  RACK:13:rack1
+  RELEASE_VERSION:4:3.11.3.5117
+  INTERNAL_IP:9:10.201.101.11
+  RPC_ADDRESS:3:10.201.104.11
+  X_11_PADDING:5988323:{"dse_version":"5.1.17","workloads":"Cassandra","workload":"Cassandra","active":"true","server_id":"C4-B8-B4-DF-65-4F","graph":false,"health":1.0}
+  NET_VERSION:1:11
+  HOST_ID:2:5b5fc088-26a0-47a6-ac5a-de8071a2164d
+  RPC_READY:72:true
+  TOKENS:49:<hidden>
+/10.201.101.13
+  generation:1574682326
+  heartbeat:46224298
+  STATUS:50:NORMAL,-1050440660951390009
+  LOAD:46224274:1.838421094351E12
+  SCHEMA:46156993:fa06910e-28e5-3417-a381-096278de01f8
+  DC:62:AUSTIN
+  RACK:13:rack1
+  RELEASE_VERSION:4:3.11.3.5117
+  INTERNAL_IP:9:10.201.101.13
+  RPC_ADDRESS:3:10.201.104.13
+  X_11_PADDING:46224261:{"dse_version":"5.1.17","workloads":"CassandraAnalytics","workload":"Analytics","active":"true","server_id":"60-F1-8A-C7-28-94","graph":false,"health":1.0}
+  NET_VERSION:1:11
+  HOST_ID:2:96bf836c-8dd8-4eab-a6e5-abfb3e44287d
+  RPC_READY:76:true
+  TOKENS:49:<hidden>
+/10.201.101.12
+  generation:1612421321
+  heartbeat:5986624
+  STATUS:50:NORMAL,-1023578572412618538
+  LOAD:5986594:1.930270013507E12
+  SCHEMA:5919318:fa06910e-28e5-3417-a381-096278de01f8
+  DC:60:AUSTIN
+  RACK:13:rack1
+  RELEASE_VERSION:4:3.11.3.5117
+  INTERNAL_IP:9:10.201.101.12
+  RPC_ADDRESS:3:10.201.104.12
+  X_11_PADDING:5986599:{"dse_version":"5.1.17","workloads":"Cassandra","workload":"Cassandra","active":"true","server_id":"60-F1-8A-C7-24-11","graph":true,"health":1.0}
+  NET_VERSION:1:11
+  HOST_ID:2:d8ff6948-d66b-4d26-9b33-179968ebf60b
+  RPC_READY:72:true
+  TOKENS:49:<hidden>
+
