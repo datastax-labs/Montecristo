@@ -1,0 +1,28 @@
+CREATE KEYSPACE dse_insights_local WITH REPLICATION = { 'class' : 'org.apache.cassandra.locator.LocalStrategy' } AND DURABLE_WRITES = true;
+
+CREATE TYPE dse_insights_local.insights_filters_rule_type (
+    policy text,
+    pattern text,
+    scope text
+);
+
+CREATE TYPE dse_insights_local.insights_config_type (
+    mode text,
+    upload_url text,
+    upload_interval_in_seconds int,
+    metric_sampling_interval_in_seconds int,
+    data_dir_max_size_in_mb int,
+    proxy_type text,
+    proxy_url text,
+    proxy_authentication text,
+    node_system_info_report_period text,
+    config_refresh_interval_in_seconds int,
+    filtering_rules frozen<set<frozen<dse_insights_local.insights_filters_rule_type>>>
+);
+
+CREATE KEYSPACE foo WITH REPLICATION = { 'class' : 'org.apache.cassandra.locator.LocalStrategy' } AND DURABLE_WRITES = true;
+
+CREATE TYPE foo.bar (
+    some_field text,
+    another_field text
+);

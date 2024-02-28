@@ -1,0 +1,1 @@
+CREATE KEYSPACE testkeyspace2 WITH REPLICATION = { 'class' : 'org.apache.cassandra.locator.NetworkTopologyStrategy', 'DC1': '3', 'DC2': '3' } AND DURABLE_WRITES = true;

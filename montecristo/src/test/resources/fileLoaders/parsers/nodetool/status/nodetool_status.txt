@@ -1,0 +1,14 @@
+Datacenter: DC1
+===============
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address        Load       Tokens  Owns    Host ID                               Rack
+UN  10.220.40.157  7.59 TB    256     ?       71d763ea-f0e6-4ac4-b78c-ba70a41decb3  22
+UN  10.220.40.26   8.46 GB    256     ?       f8cfe2cd-e8b5-43d7-8b3b-36187a267ae3  11
+UN  10.220.40.135  7.08 MB    256     ?       06eda88f-274c-4c6b-9ef7-887727cf40a0  21
+UN  10.220.40.80   7.42 KB    256     ?       534dbb94-c3ed-4781-ac4d-586e1c2e910e  13
+UN  10.220.40.210  10.5 PB    256     ?       689c1394-329a-4b54-85fb-2ee25117cd29  23
+
+Note: Non-system keyspaces don't have the same replication settings, effective ownership information is meaningless
+
+ nodetool rc=0

@@ -1,0 +1,11 @@
+
+# Limits to apply to report generation
+limits:
+  # Number of days of log entries to include within a search of the logs
+  numberOfLogDays: 90
+
+  # Aggregation Warnings to check for
+  aggregationWarnings: 1000000
+
+  # Number of prepared statements discarded to check for
+  preparedStatementWarnings: 1000000

@@ -1,0 +1,1 @@
+This cluster is running Cassandra version {{version}}. We anticipate support for this version will end mid-2023, when Cassandra 4.2 is released. We recommend upgrading this cluster to Cassandra {{recommendedVersion}}. We can assist in this process if help is requested.

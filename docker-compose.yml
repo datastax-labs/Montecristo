@@ -1,0 +1,22 @@
+version: "2.1"
+
+services:
+  # MICROSERVICES
+
+  list:
+    build: list
+    env_file:
+      - pull/env/secrets/aws.env
+
+  pull:
+    build: pull
+    command: TICKET-123
+    env_file:
+      - pull/env/secrets/aws.env
+    volumes:
+      - ${ARTIFACTS_DIR}:/root/artifacts
+
+  decrypt:
+    build: decrypt
+    volumes:
+      - ${ARTIFACTS_DIR}:/root/artifacts

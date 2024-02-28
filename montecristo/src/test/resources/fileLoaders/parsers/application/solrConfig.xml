@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+    <abortOnConfigurationError>${solr.abortOnConfigurationError:true}</abortOnConfigurationError>
+    <luceneMatchVersion>LUCENE_6_0_0</luceneMatchVersion>
+    <dseTypeMappingVersion>2</dseTypeMappingVersion>
+    <!-- guardrail: directory factory-->
+    <directoryFactory class="solr.StandardDirectoryFactory" name="DirectoryFactory"/>
+    <indexConfig>
+        <!-- guardrail: realtime indexing -->
+        <rt>false</rt>
+        <useCompoundFile>false</useCompoundFile>
+        <reopenReaders>true</reopenReaders>
+        <deletionPolicy class="solr.SolrDeletionPolicy">
+            <str name="maxCommitsToKeep">1</str>
+            <str name="maxOptimizedCommitsToKeep">0</str>
+        </deletionPolicy>
+        <infoStream file="INFOSTREAM.txt">false</infoStream>
+        <!-- guardrail: segment merge strategy and settings -->
+        <mergeFactor>13</mergeFactor>
+        <mergeScheduler class="org.apache.lucene.index.ConcurrentMergeScheduler">
+            <int name="maxThreadCount">3</int>
+            <int name="maxMergeCount">6</int>
+        </mergeScheduler>
+    </indexConfig>
+    <jmx/>
+    <updateHandler class="solr.DirectUpdateHandler2">
+        <!-- guardrail: max auto soft commit time in ms-->
+        <autoSoftCommit>
+            <maxTime>10000</maxTime>
+        </autoSoftCommit>
+    </updateHandler>
+    <query>
+        <!-- guardrail max boolean clauses -->
+        <maxBooleanClauses>1024</maxBooleanClauses>
+        <!-- guardrail filter cache class and settings -->
+        <filterCache class="solr.SolrFilterCache" highWaterMarkMB="256" lowWaterMarkMB="128"/>
+        <!-- guardrail query results cache -->
+        <queryResultCache class="solr.LRUCache"
+                          size="512"
+                          initialSize="512"
+                          autowarmCount="0"/>
+        <enableLazyFieldLoading>true</enableLazyFieldLoading>
+        <useColdSearcher>true</useColdSearcher>
+        <maxWarmingSearchers>16</maxWarmingSearchers>
+    </query>
+    <requestDispatcher handleSelect="true">
+        <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048000"/>
+        <httpCaching never304="true"/>
+    </requestDispatcher>
+    <requestHandler class="solr.SearchHandler" default="true" name="search">
+        <lst name="defaults">
+            <int name="rows">10</int>
+        </lst>
+    </requestHandler>
+    <requestHandler class="com.datastax.bdp.search.solr.handler.component.CqlSearchHandler" name="solr_query">
+        <lst name="defaults">
+            <int name="rows">10</int>
+            <str name="facet.limit">-1</str>
+        </lst>
+    </requestHandler>
+    <requestHandler class="solr.UpdateRequestHandler" name="/update"/>
+    <requestHandler class="solr.UpdateRequestHandler" name="/update/csv" startup="lazy"/>
+    <requestHandler class="solr.UpdateRequestHandler" name="/update/json" startup="lazy"/>
+    <requestHandler class="solr.FieldAnalysisRequestHandler" name="/analysis/field" startup="lazy"/>
+    <requestHandler class="solr.DocumentAnalysisRequestHandler" name="/analysis/document" startup="lazy"/>
+    <requestHandler class="solr.admin.AdminHandlers" name="/admin/"/>
+    <requestHandler class="solr.PingRequestHandler" name="/admin/ping">
+        <lst name="invariants">
+            <str name="qt">search</str>
+            <str name="q">solrpingquery</str>
+        </lst>
+        <lst name="defaults">
+            <str name="echoParams">all</str>
+        </lst>
+    </requestHandler>
+    <requestHandler class="solr.DumpRequestHandler" name="/debug/dump">
+        <lst name="defaults">
+            <str name="echoParams">explicit</str>
+            <str name="echoHandler">true</str>
+        </lst>
+    </requestHandler>
+    <admin>
+        <defaultQuery>*:*</defaultQuery>
+    </admin>
+</config>

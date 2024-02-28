@@ -1,0 +1,18 @@
+ID                     : 19427ed3-3637-46aa-a05c-e54f36bcdfdb
+Gossip active          : true
+Thrift active          : true
+Native Transport active: true
+Load                   : 2.22 TB
+Generation No          : 1619415338
+Uptime (seconds)       : 3688807
+Heap Memory (MB)       : 3889.52 / 9940.00
+Off Heap Memory (MB)   : 406.43
+Data Center            : datacenter1
+Rack                   : rack1
+Exceptions             : 0
+Key Cache              : entries 258510, size 99.92 MB, capacity 100 MB, 2275253322 hits, 2782186019 requests, 0.818 recent hit rate, 14400 save period in seconds
+Row Cache              : entries 0, size 0 bytes, capacity 0 bytes, 0 hits, 0 requests, NaN recent hit rate, 0 save period in seconds
+Counter Cache          : entries 7202, size 1023.27 KB, capacity 50 MB, 20982475 hits, 20985627 requests, 1.000 recent hit rate, 7200 save period in seconds
+Token                  : 137447753440135994638657972227406761775
+
+ nodetool rc=0

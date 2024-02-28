@@ -1,0 +1,16 @@
+{{ partial "header.html" . }}
+
+{{if not .IsHome }}
+<h1>{{ .Title }}</h1>
+{{ end }}
+
+{{ .Content }}
+
+<ul>
+{{ range .Site.Sections }}
+    <li><a href="{{.URL}}">{{ .Title }}</a> <BR> {{ .Description }}</li>
+{{ end }}
+
+</ul>
+
+{{ partial "footer.html" . }}

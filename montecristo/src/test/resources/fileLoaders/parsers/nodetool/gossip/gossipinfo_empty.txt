@@ -1,0 +1,2 @@
+
+ nodetool rc=1

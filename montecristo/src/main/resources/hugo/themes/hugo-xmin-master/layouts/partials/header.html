@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{ if .Title }}
+    <title>{{ .Title }}</title>
+    {{ else }}
+    <title>Discovery Document Section: {{ substr (delimit (split .File.TranslationBaseName "_") " ") 4 }}</title>
+    {{ end }}
+    <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}" />
+    <link rel="stylesheet" href="{{ "/css/syntax.css" | relURL }}" />
+    <link rel="stylesheet" href="{{ "/fonts/fonts.css" | relURL }}" />
+    {{ partial "head_custom.html" . }}
+  </head>
+
+  <body>
+
+  {{ if or (not (isset .Params "show_discovery_banner")) (.Params.show_discovery_banner) }}
+  <div id = 'discovery'>
+    Discovery Findings
+  </div>
+  {{ end }}

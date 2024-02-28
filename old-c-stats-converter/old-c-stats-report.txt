@@ -1,0 +1,108 @@
+2023-05-30 16:32:52 - base folder : /Users/andrew.hogg/ds-discovery/GRUP-1/extracted
+2023-05-30 16:32:52 - starting processing : Tue May 30 16:32:52 BST 2023 
+2023-05-30 16:32:52 - 6938 files found to process
+2023-05-30 16:32:52 - Configuration location: file:/Users/andrew.hogg/Code/montecristo/old-c-stats-converter/sstablemetadata-cassandra.yaml
+2023-05-30 16:32:52 - Node configuration:[allocate_tokens_for_keyspace=null; allow_extra_insecure_udfs=false; allow_insecure_udfs=false; authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_bootstrap=true; auto_snapshot=true; back_pressure_enabled=false; back_pressure_strategy=org.apache.cassandra.net.RateBasedBackPressure{high_ratio=0.9, factor=5, flow=FAST}; batch_size_fail_threshold_in_kb=50; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=null; broadcast_rpc_address=null; buffer_pool_use_heap_if_exhausted=true; cache_load_timeout_seconds=30; cas_contention_timeout_in_ms=1000; cdc_enabled=false; cdc_free_space_check_interval_ms=250; cdc_raw_directory=/var/lib/cassandra/cdc_raw; cdc_total_space_in_mb=0; check_for_duplicate_rows_during_compaction=true; check_for_duplicate_rows_during_reads=true; client_encryption_options=<REDACTED>; cluster_name=Test Cluster 2; column_index_cache_size_in_kb=2; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_compression=null; commitlog_directory=/var/lib/cassandra/commitlog; commitlog_max_compression_buffers_in_pool=3; commitlog_periodic_queue_size=-1; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_batch_window_in_ms=NaN; commitlog_sync_period_in_ms=10000; commitlog_total_space_in_mb=null; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=32; concurrent_compactors=null; concurrent_counter_writes=32; concurrent_materialized_view_writes=32; concurrent_reads=32; concurrent_replicates=null; concurrent_writes=32; counter_cache_keys_to_save=2147483647; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; credentials_cache_max_entries=1000; credentials_update_interval_in_ms=-1; credentials_validity_in_ms=2000; cross_node_timeout=false; data_file_directories=[Ljava.lang.String;@2bbf180e; disk_access_mode=auto; disk_failure_policy=stop; disk_optimization_estimate_percentile=0.95; disk_optimization_page_cross_chance=0.1; disk_optimization_strategy=ssd; dynamic_snitch=true; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; enable_drop_compact_storage=false; enable_materialized_views=true; enable_sasi_indexes=true; enable_scripted_user_defined_functions=false; enable_user_defined_functions=false; enable_user_defined_functions_threads=true; encryption_options=<REDACTED>; endpoint_snitch=SimpleSnitch; file_cache_round_up=null; file_cache_size_in_mb=null; force_new_prepared_statement_behaviour=false; gc_log_threshold_in_ms=200; gc_warn_threshold_in_ms=1000; hinted_handoff_disabled_datacenters=[]; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; hints_compression=null; hints_directory=/var/lib/cassandra/hints; hints_flush_period_in_ms=10000; incremental_backups=false; index_interval=null; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; initial_token=null; inter_dc_stream_throughput_outbound_megabits_per_sec=200; inter_dc_tcp_nodelay=false; internode_authenticator=null; internode_compression=dc; internode_recv_buff_size_in_bytes=0; internode_send_buff_size_in_bytes=0; key_cache_keys_to_save=2147483647; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=localhost; listen_interface=null; listen_interface_prefer_ipv6=false; listen_on_broadcast_address=false; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; max_hints_file_size_in_mb=128; max_mutation_size_in_kb=null; max_streaming_retries=3; max_value_size_in_mb=256; memtable_allocation_type=heap_buffers; memtable_cleanup_threshold=null; memtable_flush_writers=0; memtable_heap_space_in_mb=null; memtable_offheap_space_in_mb=null; min_free_space_per_drive_in_mb=50; native_transport_flush_in_batches_legacy=true; native_transport_max_concurrent_connections=-1; native_transport_max_concurrent_connections_per_ip=-1; native_transport_max_concurrent_requests_in_bytes=-1; native_transport_max_concurrent_requests_in_bytes_per_ip=-1; native_transport_max_frame_size_in_mb=256; native_transport_max_negotiable_protocol_version=-2147483648; native_transport_max_threads=128; native_transport_port=9042; native_transport_port_ssl=null; num_tokens=64; otc_backlog_expiration_interval_ms=200; otc_coalescing_enough_coalesced_messages=8; otc_coalescing_strategy=DISABLED; otc_coalescing_window_us=200; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_cache_max_entries=1000; permissions_update_interval_in_ms=-1; permissions_validity_in_ms=2000; phi_convict_threshold=8.0; prepared_statements_cache_size_mb=null; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; repair_session_max_tree_depth=18; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_scheduler_id=null; request_scheduler_options=null; request_timeout_in_ms=10000; role_manager=CassandraRoleManager; roles_cache_max_entries=1000; roles_update_interval_in_ms=-1; roles_validity_in_ms=2000; row_cache_class_name=org.apache.cassandra.cache.OHCProvider; row_cache_keys_to_save=2147483647; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=localhost; rpc_interface=null; rpc_interface_prefer_ipv6=false; rpc_keepalive=true; rpc_listen_backlog=50; rpc_max_threads=2147483647; rpc_min_threads=16; rpc_port=9160; rpc_recv_buff_size_in_bytes=null; rpc_send_buff_size_in_bytes=null; rpc_server_type=sync; saved_caches_directory=/var/lib/cassandra/saved_caches; seed_provider=org.apache.cassandra.locator.SimpleSeedProvider{seeds=127.0.0.1}; server_encryption_options=<REDACTED>; slow_query_log_timeout_in_ms=500; snapshot_before_compaction=false; snapshot_on_duplicate_row_detection=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; stream_throughput_outbound_megabits_per_sec=200; streaming_keep_alive_period_in_secs=300; streaming_socket_timeout_in_ms=86400000; thrift_framed_transport_size_in_mb=15; thrift_max_message_length_in_mb=16; thrift_prepared_statements_cache_size_mb=null; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; tracetype_query_ttl=86400; tracetype_repair_ttl=604800; transparent_data_encryption_options=org.apache.cassandra.config.TransparentDataEncryptionOptions@163e4e87; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; user_defined_function_fail_timeout=1500; user_defined_function_warn_timeout=500; user_function_timeout_policy=die; windows_timer_interval=1; write_request_timeout_in_ms=2000]
+2023-05-30 16:32:52 - DiskAccessMode 'auto' determined to be mmap, indexAccessMode is mmap
+2023-05-30 16:32:52 - Global memtable on-heap threshold is enabled at 1820MB
+2023-05-30 16:32:52 - Global memtable off-heap threshold is enabled at 1820MB
+2023-05-30 16:32:52 - Only 60.405GiB free across all data volumes. Consider adding more capacity to your cluster or removing obsolete snapshots
+2023-05-30 16:32:52 - Initialized back-pressure with high ratio: 0.9, factor: 5, flow: FAST, window size: 2000.
+2023-05-30 16:32:52 - Back-pressure is disabled with strategy org.apache.cassandra.net.RateBasedBackPressure{high_ratio=0.9, factor=5, flow=FAST}.
+2023-05-30 16:32:53 - Global buffer pool is enabled, when pool is exhausted (max is 512.000MiB) it will allocate on heap
+2023-05-30 16:32:55 - org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:132)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$main$0(SSTableMetadataViewer.java:161)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.main(SSTableMetadataViewer.java:160)
+	at com.datastax.oldcstatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:49)
+	at com.datastax.oldcstatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.oldcstatsconverter.ConvertKt.main(Convert.kt:30)
+
+2023-05-30 16:32:55 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd36.gruppoitas.local_artifacts_2022_09_28_2036_1664390194/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-502-big-Statistics.db
+2023-05-30 16:32:58 - org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:132)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$main$0(SSTableMetadataViewer.java:161)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.main(SSTableMetadataViewer.java:160)
+	at com.datastax.oldcstatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:49)
+	at com.datastax.oldcstatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.oldcstatsconverter.ConvertKt.main(Convert.kt:30)
+
+2023-05-30 16:32:58 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd34.gruppoitas.local_artifacts_2022_09_28_2101_1664391708/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-725-big-Statistics.db
+2023-05-30 16:32:58 - org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:132)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$main$0(SSTableMetadataViewer.java:161)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.main(SSTableMetadataViewer.java:160)
+	at com.datastax.oldcstatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:49)
+	at com.datastax.oldcstatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.oldcstatsconverter.ConvertKt.main(Convert.kt:30)
+
+2023-05-30 16:32:58 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd34.gruppoitas.local_artifacts_2022_09_28_2101_1664391708/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-726-big-Statistics.db
+2023-05-30 16:33:00 - org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:132)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$main$0(SSTableMetadataViewer.java:161)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.main(SSTableMetadataViewer.java:160)
+	at com.datastax.oldcstatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:49)
+	at com.datastax.oldcstatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.oldcstatsconverter.ConvertKt.main(Convert.kt:30)
+
+2023-05-30 16:33:00 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd35.gruppoitas.local_artifacts_2022_09_28_2049_1664390945/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-692-big-Statistics.db
+2023-05-30 16:33:00 - org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:132)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$main$0(SSTableMetadataViewer.java:161)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.main(SSTableMetadataViewer.java:160)
+	at com.datastax.oldcstatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:49)
+	at com.datastax.oldcstatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.oldcstatsconverter.ConvertKt.main(Convert.kt:30)
+
+2023-05-30 16:33:00 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd35.gruppoitas.local_artifacts_2022_09_28_2049_1664390945/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-691-big-Statistics.db
+2023-05-30 16:33:01 - Completed table metadata processing : Tue May 30 16:33:01 BST 2023

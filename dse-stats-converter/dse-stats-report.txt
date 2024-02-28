@@ -1,0 +1,148 @@
+2023-05-30 16:32:29 - base folder : /Users/andrew.hogg/ds-discovery/GRUP-1/extracted
+2023-05-30 16:32:29 - starting processing : Tue May 30 16:32:29 BST 2023 
+2023-05-30 16:32:29 - 6938 files found to process
+2023-05-30 16:32:30 - Disk optimization strategy for Solid-State drives (SSD) using min buffer size of 4096 bytes and max buffer size of 65536 bytes
+2023-05-30 16:32:30 - Detected max direct memory 7.111GiB and max heap 7.111GiB
+2023-05-30 16:32:30 - Using file cache of 1.777GiB, 25% of max direct memory
+2023-05-30 16:32:30 - Using direct reads cache of 48.000MiB, refer to the the direct_reads_size_in_mb property
+2023-05-30 16:32:30 - TPC backpressure is disabled. NOT RECOMMENDED.
+2023-05-30 16:32:30 - Created 11 NIO event loops (with I/O ratio set to 50).
+2023-05-30 16:32:30 - Created 2 TPC timers due to configured ratio of 5.
+2023-05-30 16:32:30 - CachedReadsBufferPool is enabled, max is 0.000KiB
+2023-05-30 16:32:30 - DirectReadsBufferPool is enabled, max is 48.000MiB
+2023-05-30 16:32:33 - java.lang.reflect.InvocationTargetException
+	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method.callMethod(CallerImpl.kt:97)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method$Instance.call(CallerImpl.kt:113)
+	at kotlin.reflect.jvm.internal.KCallableImpl.call(KCallableImpl.kt:108)
+	at com.datastax.dsestatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:82)
+	at com.datastax.dsestatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.dsestatsconverter.ConvertKt.main(Convert.kt:30)
+Caused by: org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:234)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$printSStableMetadata$5(SSTableMetadataViewer.java:396)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.printSStableMetadata(SSTableMetadataViewer.java:396)
+	... 9 more
+
+2023-05-30 16:32:33 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd36.gruppoitas.local_artifacts_2022_09_28_2036_1664390194/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-502-big-Statistics.db
+2023-05-30 16:32:38 - java.lang.reflect.InvocationTargetException
+	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method.callMethod(CallerImpl.kt:97)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method$Instance.call(CallerImpl.kt:113)
+	at kotlin.reflect.jvm.internal.KCallableImpl.call(KCallableImpl.kt:108)
+	at com.datastax.dsestatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:82)
+	at com.datastax.dsestatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.dsestatsconverter.ConvertKt.main(Convert.kt:30)
+Caused by: org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:234)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$printSStableMetadata$5(SSTableMetadataViewer.java:396)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.printSStableMetadata(SSTableMetadataViewer.java:396)
+	... 9 more
+
+2023-05-30 16:32:38 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd34.gruppoitas.local_artifacts_2022_09_28_2101_1664391708/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-725-big-Statistics.db
+2023-05-30 16:32:38 - java.lang.reflect.InvocationTargetException
+	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method.callMethod(CallerImpl.kt:97)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method$Instance.call(CallerImpl.kt:113)
+	at kotlin.reflect.jvm.internal.KCallableImpl.call(KCallableImpl.kt:108)
+	at com.datastax.dsestatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:82)
+	at com.datastax.dsestatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.dsestatsconverter.ConvertKt.main(Convert.kt:30)
+Caused by: org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:234)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$printSStableMetadata$5(SSTableMetadataViewer.java:396)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.printSStableMetadata(SSTableMetadataViewer.java:396)
+	... 9 more
+
+2023-05-30 16:32:38 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd34.gruppoitas.local_artifacts_2022_09_28_2101_1664391708/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-726-big-Statistics.db
+2023-05-30 16:32:42 - java.lang.reflect.InvocationTargetException
+	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method.callMethod(CallerImpl.kt:97)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method$Instance.call(CallerImpl.kt:113)
+	at kotlin.reflect.jvm.internal.KCallableImpl.call(KCallableImpl.kt:108)
+	at com.datastax.dsestatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:82)
+	at com.datastax.dsestatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.dsestatsconverter.ConvertKt.main(Convert.kt:30)
+Caused by: org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:234)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$printSStableMetadata$5(SSTableMetadataViewer.java:396)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.printSStableMetadata(SSTableMetadataViewer.java:396)
+	... 9 more
+
+2023-05-30 16:32:42 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd35.gruppoitas.local_artifacts_2022_09_28_2049_1664390945/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-692-big-Statistics.db
+2023-05-30 16:32:42 - java.lang.reflect.InvocationTargetException
+	at sun.reflect.GeneratedMethodAccessor1.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method.callMethod(CallerImpl.kt:97)
+	at kotlin.reflect.jvm.internal.calls.CallerImpl$Method$Instance.call(CallerImpl.kt:113)
+	at kotlin.reflect.jvm.internal.KCallableImpl.call(KCallableImpl.kt:108)
+	at com.datastax.dsestatsconverter.SSTableStatisticsConverter.execute(SSTableStatisticsConverter.kt:82)
+	at com.datastax.dsestatsconverter.Convert.execute(Convert.kt:43)
+	at com.datastax.dsestatsconverter.ConvertKt.main(Convert.kt:30)
+Caused by: org.apache.cassandra.serializers.MarshalException: String didn't validate.
+	at org.apache.cassandra.serializers.UTF8Serializer.validate(UTF8Serializer.java:35)
+	at org.apache.cassandra.db.marshal.AbstractType.getString(AbstractType.java:234)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.lambda$printSStableMetadata$5(SSTableMetadataViewer.java:396)
+	at java.util.stream.Collectors.lambda$toMap$58(Collectors.java:1320)
+	at java.util.stream.ReduceOps$3ReducingSink.accept(ReduceOps.java:169)
+	at java.util.Iterator.forEachRemaining(Iterator.java:116)
+	at java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1801)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:482)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:472)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at org.apache.cassandra.tools.SSTableMetadataViewer.printSStableMetadata(SSTableMetadataViewer.java:396)
+	... 9 more
+
+2023-05-30 16:32:42 - unable to read file /Users/andrew.hogg/ds-discovery/GRUP-1/extracted/bdprd35.gruppoitas.local_artifacts_2022_09_28_2049_1664390945/sstable-statistics/products/data/cassandra/cfs/inode-76298b94ca5f375cab5bb674eddd3d51/mc-691-big-Statistics.db
+2023-05-30 16:32:44 - Completed table metadata processing : Tue May 30 16:32:44 BST 2023

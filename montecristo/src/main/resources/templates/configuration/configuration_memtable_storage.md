@@ -1,0 +1,4 @@
+## Memtable storage
+
+{{memtableConfigurationSection}}
+

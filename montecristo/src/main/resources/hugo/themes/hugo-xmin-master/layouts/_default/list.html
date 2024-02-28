@@ -1,0 +1,20 @@
+{{ partial "header.html" . }}
+
+{{if not .IsHome }}
+<h1>{{ .Title }}</h1>
+{{ end }}
+
+{{ .Content }}
+
+<ul>
+  {{ range (where .Data.Pages.ByWeight "Section" "!=" "") }}
+  <li>
+    <div>
+    <a href="{{ .URL }}">{{ .Title }}</a>
+      <BR> {{ .Description }}
+
+  </li>
+  {{ end }}
+</ul>
+
+{{ partial "footer.html" . }}
