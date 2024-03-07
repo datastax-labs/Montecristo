@@ -117,11 +117,11 @@ interface DatabaseVersion {
         }
 
         fun latest40() : DatabaseVersion {
-            return fromString("4.0.11")
+            return fromString("4.0.12")
         }
 
         fun latest41() : DatabaseVersion {
-            return fromString("4.1.3")
+            return fromString("4.1.4")
         }
 
         fun latestDSE4() : DatabaseVersion {
