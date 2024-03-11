@@ -1,0 +1,77 @@
+name: Montecristo CI
+
+on:
+  push:
+    paths:
+      - '**'
+      - "!untagged-.**"
+      - "!master-snapshot.**"
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup Maven Cache
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/build.gradle') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Setup Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: '8.0.192'
+        java-package: jdk
+        architecture: x64
+    - name: Get tag name
+      id: get_tag_name
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+    - name: Build Montecristo
+      env:
+        VERSION: ${{ steps.get_tag_name.outputs.VERSION }}
+      run: |
+        echo "Building version $VERSION"
+        pushd montecristo/src/main/resources
+        ./mkhugozip.sh
+        popd
+        pushd montecristo/
+        ./gradlew build install
+        popd
+
+    - name: Packaging
+      env:
+        VERSION: ${{ steps.get_tag_name.outputs.VERSION }}
+      if: github.event_name == 'release' && github.event.action == 'published'
+      run: |
+        mkdir -p tlp-tools/disvery/montecristo/build/install
+        mkdir -p tlp-tools/montecristo/src/main/resources
+        cp -R docs tlp-tools/
+        cp -R ds-collector tlp-tools/
+        cp Makefile tlp-tools/
+        cp -R decrypt tlp-tools/
+        cp -R list tlp-tools/
+        cp montecristo/{docker-entrypoint.sh,Dockerfile,LICENSE,mksql.sh} tlp-tools/montecristo
+        cp -R montecristo/build/install tlp-tools/montecristo/build/
+        cp docker-compose.yml tlp-tools/
+        cp -R pull tlp-tools/
+        cp run.sh tlp-tools/
+        cp -R run.sh tlp-tools/
+        tar czf tlp-tools-${VERSION}.tar.gz tlp-tools
+        mkdir package
+        mv tlp-tools-* package
+
+    - name: Upload artifacts to GitHub Release
+      uses: fnkr/github-action-ghr@v1
+      if: github.event_name == 'release' && github.event.action == 'published'
+      env:
+        GHR_PATH: package
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
