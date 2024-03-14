@@ -21,6 +21,7 @@ import com.datastax.montecristo.logs.Searcher
 import com.datastax.montecristo.logs.logMessageParsers.TombstoneWarningMessage
 import com.datastax.montecristo.model.versions.cassandra.*
 import com.datastax.montecristo.model.versions.dse.*
+import java.net.URL
 
 interface DatabaseVersion {
 
@@ -131,7 +132,10 @@ interface DatabaseVersion {
             return fromString("5.0.16", true)
         }
         fun latestDSE51() : DatabaseVersion {
-            return fromString("5.1.42", true)
+            // Grab the release notes from github
+            val releaseNoteLines = URL("https://raw.githubusercontent.com/datastax/release-notes/master/DSE_5.1_Release_Notes.md").readText().split("\n")
+            val latestRelease = locateLatestRelease(releaseNoteLines, "# Release notes for 5.1.")
+            return fromString(latestRelease, true)
         }
         fun latestDSE60() : DatabaseVersion {
             return fromString("6.0.19", true)
@@ -140,7 +144,17 @@ interface DatabaseVersion {
             return fromString("6.7.17", true)
         }
         fun latestDSE68() : DatabaseVersion {
-            return fromString("6.8.42", true)
+            // Grab the release notes from github
+            val releaseNoteLines = URL("https://raw.githubusercontent.com/datastax/release-notes/master/DSE_6.8_Release_Notes.md").readText().split("\n")
+            val latestRelease = locateLatestRelease(releaseNoteLines, "# Release notes for 6.8.")
+            return fromString(latestRelease, true)
+        }
+
+        internal fun locateLatestRelease(releaseNotes : List<String>, releaseNotePattern: String): String {
+            // find the lines in the markdown which refer to releases of a version, then take the first (which is the top entry)
+            val latestReleaseNoteLine = releaseNotes.filter { l -> l.startsWith(releaseNotePattern) }.first()
+            // the release number is at the end of the line
+            return latestReleaseNoteLine.substringAfterLast(" ")
         }
     }
 }

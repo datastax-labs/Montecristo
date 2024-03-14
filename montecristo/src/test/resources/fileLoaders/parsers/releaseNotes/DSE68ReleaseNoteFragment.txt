@@ -1,0 +1,138 @@
+# Release notes for DataStax Enterprise 6.8
+DSE 6.8.x is compatible with Apache Cassandra&trade; 3.11 and adds additional production-certified changes, if any.
+Components that are indicated with an asterisk (&ast;) (if any) are known to be updated since the prior patch version.
+
+Release notes of versions prior to 6.8.4 can be found [here](https://docs.datastax.com/en/dse/6.8/dse-admin/datastax_enterprise/releaseNotes/RNdse.html).
+
+# Release notes for 6.8.43
+11 March 2024
+
+## Components versions for DSE 6.8.43
+ * Apache Solr™ 6.0.1.4.2964
+ * Apache Spark™ 2.4.0.30&ast;
+ * Apache TinkerPop™ 3.4.14-20240307-bcc67d14&ast;
+ * Apache Tomcat® 8.5.94
+ * DSE Java Driver 1.10.0-dse-20240212&ast; (DSE *internal-only* version)
+ * Netty 4.1.100.1.dse
+ * Spark JobServer 0.8.0.54
+
+**NOTE**: above-listed DSE Java Driver is an _internal-version_ only.
+If you're developing applications, please refer to the [Java Driver documentation](https://docs.datastax.com/en/driver-matrix/doc/java-drivers.html) to choose an appropriate version.
+
+## 6.8.43 DSE Cassandra
+* Reverted the regression caused by DSP-23913 which introduced a change in batch size calculation that impacts the behaviour of the batch_size guardrail. Introduced a new guardrail called `batch_size_with_pk_warn_threshold_in_kb`, `batch_size_with_pk_fail_threshold_in_kb` instead that honours the updated logic. (DSP-24011)
+
+## 6.8.43 DSE Core
+* Fixed issue causing indefinite waits during flush operations when TPC executor gets overloaded and default queue size is exceeded. (DSP-23774)
+* Modified DSE Advanced Authentication to preserve credentials cache in case of an LDAP internal error causing authentication failure. (DSP-12590)
+* Improved LDAP logging by decreasing the frequency of search reference warning messages. (DSP-21177)
+* Changed DSE Advanced Authentication to only record in audit log a login error when authentication fails due to matching credentials (and not for provider internal errors). (DSP-23952)
+
+## 6.8.43 DSE Docker
+* Upgraded JDK versions in DSE Docker images to `8u392` and `11.0.21`. (DSP-23213)
+
+## 6.8.43 DSE CVE
+* Upgraded `org.json:json` to version `20240205`. (DSP-23784, [CVE-2023-5072](https://nvd.nist.gov/vuln/detail/CVE-2023-5072))
+* Upgraded `snappy-java` to version `1.1.10.4`. (DSP-23819, [CVE-2023-43642](https://nvd.nist.gov/vuln/detail/CVE-2023-43642))
+* Upgraded `jnr-posix` to version `3.1.8`. (DSP-23820, [CWE-416](https://nvd.nist.gov/vuln/detail/CWE-416))
+
+# Release notes for 6.8.42
+5 February 2024
+
+## Components versions for DSE 6.8.42
+ * Apache Solr™ 6.0.1.4.2964
+ * Apache Spark™ 2.4.0.29
+ * Apache TinkerPop™ 3.4.14-20231030-479dc6d7
+ * Apache Tomcat® 8.5.94
+ * DSE Java Driver 1.10.0-dse-20220616 (DSE *internal-only* version)
+ * Netty 4.1.100.1.dse
+ * Spark JobServer 0.8.0.54
+
+**NOTE**: above-listed DSE Java Driver is an _internal-version_ only.
+If you're developing applications, please refer to the [Java Driver documentation](https://docs.datastax.com/en/driver-matrix/doc/java-drivers.html) to choose an appropriate version.
+
+## 6.8.42 DSE Cassandra
+* Fixed mutation size calculation formula by taking into account static column updates. Backporting CASSANDRA-15293 achieved this fix. (DSP-23933)
+* Fixed batch size guardrail to take into account the mutation primary key size. That prevents flooding the cluster with operations for tables that use the primary key without clustering columns. (DSP-23913)
+
+## 6.8.42 DSE DSEFS
+* Fixed DSEFS file path handling that could fail when using filenames containing colons. (DSP-23947)
+
+## 6.8.42 DSE Insights
+* Removed Python 2.7 libraries from `collectd`. (DSP-23764)
+
+## 6.8.42 DSE CVE
+* Upgraded the DSE 6.8 dependency on Ehcache to Terracotta's version of Ehcache v2.10.10.17.20. The Terracotta version does not include extra libraries (specifically Jackson databind). The previous Ehcache v2.10.9.2 was exposing a security vulnerability CVE-2020-36518. The vulnerability in `jackson-databind` before v2.13.0 allowed a Java StackOverflow exception and denial of service via a large depth of nested objects. (DSP-23508, [CVE-2020-36518](https://nvd.nist.gov/vuln/detail/CVE-2020-36518), [CVE-2017-17485](https://nvd.nist.gov/vuln/detail/CVE-2017-17485), [CVE-2017-7525](https://nvd.nist.gov/vuln/detail/CVE-2017-7525), [CVE-2018-11307](https://nvd.nist.gov/vuln/detail/CVE-2018-11307), [CVE-2018-7489](https://nvd.nist.gov/vuln/detail/CVE-2018-7489), [CVE-2019-16942](https://nvd.nist.gov/vuln/detail/CVE-2019-16942))
+
+
+# Release notes for 6.8.41
+18 December 2023
+
+## Components versions for DSE 6.8.41
+ * Apache Solr™ 6.0.1.4.2964
+ * Apache Spark™ 2.4.0.29
+ * Apache TinkerPop™ 3.4.14-20231030-479dc6d7
+ * Apache Tomcat® 8.5.94&ast;
+ * DSE Java Driver 1.10.0-dse-20220616 (DSE *internal-only* version)
+ * Netty 4.1.100.1.dse
+ * Spark JobServer 0.8.0.54
+
+**NOTE**: above-listed DSE Java Driver is an _internal-version_ only.
+If you're developing applications, please refer to the [Java Driver documentation](https://docs.datastax.com/en/driver-matrix/doc/java-drivers.html) to choose an appropriate version.
+
+## 6.8.41 DSE Core
+* Fixed deadlock in indexes initialization that occurs when the same table has both a secondary index and a search index and the entries in `IndexInfo` table are missing. The deadlock is resolved by marking the SOLR index as built in a different thread than the main DSE thread. (DSP-23828)
+
+## 6.8.41 DSE NodeSync
+* Fixed the `ConcurrentModificationException` exception occurring in error during the NodeSync old validations cleanup process. (DSP-23821)
+
+## 6.8.41 DSE CVE
+* Upgraded Jetty to version `9.4.53.v20231009`. (DSP-23734, [CVE-2023-44487](https://nvd.nist.gov/vuln/detail/CVE-2023-44487))
+* Upgraded Apache Tomcat to version `8.5.94`. (DSP-23779, [CVE-2023-45648](https://nvd.nist.gov/vuln/detail/CVE-2023-45648))
+
+
+# Release notes for 6.8.40
+7 November 2023
+
+## Components versions for DSE 6.8.40
+ * Apache Solr™ 6.0.1.4.2964&ast;
+ * Apache Spark™ 2.4.0.29
+ * Apache TinkerPop™ 3.4.14-20231030-479dc6d7&ast;
+ * Apache Tomcat® 8.5.93
+ * DSE Java Driver 1.10.0-dse-20220616 (DSE *internal-only* version)
+ * Netty 4.1.100.1.dse&ast;
+ * Spark JobServer 0.8.0.54
+
+**NOTE**: above-listed DSE Java Driver is an _internal-version_ only.
+If you're developing applications, please refer to the [Java Driver documentation](https://docs.datastax.com/en/driver-matrix/doc/java-drivers.html) to choose an appropriate version.
+
+## 6.8.40 DSE Cassandra
+* Ensured that tombstones get NodeSynced before expiring by assigning segments that have never successfully been NodeSynced an urgent priority. (DSP-23710)
+
+## 6.8.40 DSE CVE
+* Upgraded Netty to version `4.1.100.1.dse` that is based on `4.1.100.Final`. (DSP-23763, [CVE-2023-44487](https://nvd.nist.gov/vuln/detail/CVE-2023-44487), [CVE-2022-41881](https://nvd.nist.gov/vuln/detail/CVE-2022-41881), [CVE-2023-34462](https://nvd.nist.gov/vuln/detail/CVE-2023-34462))
+* Removed `htrace` coming from Hadoop libraries (see [HADOOP-17424](https://issues.apache.org/jira/browse/HADOOP-17424)). Removed `jackson-databind` version `2.4.0` that was a transitive dependency of `htrace`. (DSP-23450)
+* Removed the `htrace` version from the `lucene-solr` library. `htrace` is an unused dependency in DSE 6.8.  This removal resolved security vulnerabilities related to the `htrace` dependency, despite its being unused. (DSP-23756)
+
+
+# Release notes for 6.8.39
+9 October 2023
+
+## Components versions for DSE 6.8.39
+ * Apache Solr™ 6.0.1.4.2959
+ * Apache Spark™ 2.4.0.29
+ * Apache TinkerPop™ 3.4.14-20230814-301fd418
+ * Apache Tomcat® 8.5.93
+ * DSE Java Driver 1.10.0-dse-20220616 (DSE *internal-only* version)
+ * Netty 4.1.86.1.dse
+ * Spark JobServer 0.8.0.54
+
+**NOTE**: above-listed DSE Java Driver is an _internal-version_ only.
+If you're developing applications, please refer to the [Java Driver documentation](https://docs.datastax.com/en/driver-matrix/doc/java-drivers.html) to choose an appropriate version.
+
+## 6.8.39 DSE Hadoop
+* Ensured that DSE uses only version 1.12.x of the `aws-sdk-java` library. Removed the dependency on version 1.11.x which also eliminated the need for the outdated and vulnerable `jackson-databind` version 2.6.7.3. (DSP-23613)
+
+
+# Release notes for 6.8.38
+11 September 2023

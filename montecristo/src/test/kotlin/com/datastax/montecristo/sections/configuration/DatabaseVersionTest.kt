@@ -17,6 +17,7 @@
 package com.datastax.montecristo.sections.configuration
 
 import com.datastax.montecristo.logs.Searcher
+import com.datastax.montecristo.logs.logger
 import com.datastax.montecristo.model.Cluster
 import com.datastax.montecristo.model.Node
 import com.datastax.montecristo.model.profiles.ExecutionProfile
@@ -157,5 +158,11 @@ class DatabaseVersionTest {
         assertThat(recs.size).isEqualTo(1)
         assertThat(recs[0].longForm).contains("6.8")
         assertThat(recs[0].longForm).contains("https://www.datastax.com/legal/supported-software")
+    }
+
+    @Test
+    fun testDSELatestReleastv6() {
+        val content = this.javaClass.getResourceAsStream("/fileLoaders/parsers/releaseNotes/DSE68ReleaseNoteFragment.txt").reader().readLines()
+        assertThat(DatabaseVersion.locateLatestRelease(content, "# Release notes for 6.8.")).isEqualTo("6.8.43")
     }
 }
