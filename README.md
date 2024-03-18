@@ -162,3 +162,4 @@ These instructions tested on new/clean Windows install using WSL2 running Ubuntu
    * netty-all-4.1.25.7.dse.jar
    * rxjava-2.2.7.jar
    If the dse-db-all file exists in that folder, it will automatically enable the option within the run.sh script to offer the option of converting the files.
+7. When running for the first time, execute the `mkhugozip.sh` script in `montecristo/src/main/resources/`
