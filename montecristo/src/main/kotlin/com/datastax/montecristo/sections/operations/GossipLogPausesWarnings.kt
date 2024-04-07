@@ -40,11 +40,11 @@ class GossipLogPausesWarnings : DocumentSection {
         // search and parse the gossip failure detector messages
         val pauseWarnings = logSearcher.search(
             "FailureDetector.java",
-            limit = LIMIT
+            limit = executionProfile.limits.gossipPauseWarnings
         ).mapNotNull { GossipLogPauseMessage.fromLogEntry(it) }
 
         // first - did we hit the limit (and thus need to caveat any figures)
-        val hitMessageLimit = pauseWarnings.size == LIMIT
+        val hitMessageLimit = pauseWarnings.size == executionProfile.limits.gossipPauseWarnings
 
         // Generate some statistical information, count, total, average duration, average duration, average per hour and %
         val countOfMessagesPerNode = pauseWarnings.groupingBy { it.host }.eachCount()
@@ -77,14 +77,14 @@ class GossipLogPausesWarnings : DocumentSection {
         }
 
         val countOfWarningsMessage = if (hitMessageLimit) {
-            "More than $LIMIT local pause warnings were discovered within the logs"
+            "More than ${executionProfile.limits.gossipPauseWarnings} local pause warnings were discovered within the logs"
         } else {
             "A total of ${pauseWarnings.size} local pause warnings were discovered within the logs."
         }
 
         // TODO - what triggers the recommendation, % of time? max of a duration? avg duraation?
         if ((percentTimePause.maxByOrNull
-            { it.value }?.value ?: 0.0) > MIN_PERCENTAGE_PAUSED_TO_RECOMMEND
+            { it.value }?.value ?: 0.0) > executionProfile.limits.gossipPauseTimePercentageThreshold
         ) {
             recs.near(RecommendationType.OPERATIONS,"We recommend further investigation into the elevated level of local pause warnings.")
         }
@@ -92,10 +92,5 @@ class GossipLogPausesWarnings : DocumentSection {
         args["countOfWarnings"] = countOfWarningsMessage
         args["localPauseMessagesTable"] = countPerNodeTable.toString()
         return compileAndExecute("operations/operations_gossip_pause.md", args)
-    }
-
-    companion object {
-        private const val LIMIT = 1000000
-        private const val MIN_PERCENTAGE_PAUSED_TO_RECOMMEND = 5.0
     }
 }

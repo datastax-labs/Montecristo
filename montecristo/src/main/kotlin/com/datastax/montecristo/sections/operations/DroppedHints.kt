@@ -37,7 +37,7 @@ class DroppedHints : DocumentSection {
 
         val args = super.createDocArgs(cluster)
 
-		val droppedHintsResult = logSearcher.search("dropped AND hints", LogLevel.WARN, limit = 100000)
+		val droppedHintsResult = logSearcher.search("dropped AND hints", LogLevel.WARN, limit = executionProfile.limits.droppedHints)
 
 		val droppedMessagedRegex = """([^\s]*) has ([\d]*) dropped""".toRegex()
 

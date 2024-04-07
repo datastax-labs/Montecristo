@@ -64,7 +64,7 @@ class PreparedStatements : DocumentSection {
             (countOfMessagesPerNode.getOrDefault(
                 node.key,
                 0
-            ) / mapOfDurations.getValue(node.key) > PREPARED_STATEMENT_DISCARDED_PER_HOUR_LIMIT)
+            ) / mapOfDurations.getValue(node.key) > executionProfile.limits.preparedStatementMessagesPerHourThreshold)
         }
 
         // Warnings aggregated by Date - for the last 7 days
@@ -94,14 +94,10 @@ class PreparedStatements : DocumentSection {
             // trigger a recommendation if the number of warnings exceeds the trigger limit
             recs.immediate(
                 RecommendationType.OPERATIONS,
-                "There are over $PREPARED_STATEMENT_DISCARDED_PER_HOUR_LIMIT prepared statement discard warnings on average every hour. $remediationMessage"
+                "There are over ${executionProfile.limits.preparedStatementMessagesPerHourThreshold} prepared statement discard warnings on average every hour. $remediationMessage"
             )
         }
         return compileAndExecute("operations/operations_prepared_statements_discarded.md", args)
-    }
-
-    companion object {
-        private const val PREPARED_STATEMENT_DISCARDED_PER_HOUR_LIMIT = 1
     }
 }
 
