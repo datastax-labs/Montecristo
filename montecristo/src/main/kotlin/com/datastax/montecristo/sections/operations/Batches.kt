@@ -38,8 +38,8 @@ class Batches : DocumentSection {
 
         val batchWarnings = cluster.databaseVersion.searchLogForBatches(logSearcher, QUERY_LIMIT)
 
-        val numWarnings = if (batchWarnings.size > 1000000) {
-            "over a million"
+        val numWarnings = if (batchWarnings.size > executionProfile.limits.batchSizeWarnings) {
+            "over ${executionProfile.limits.batchSizeWarnings}"
         } else {
             batchWarnings.size.toString()
         }

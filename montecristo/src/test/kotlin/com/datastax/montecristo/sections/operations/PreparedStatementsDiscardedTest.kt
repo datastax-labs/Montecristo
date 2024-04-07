@@ -80,7 +80,7 @@ class PreparedStatementsDiscardedTest {
 
     @Test
     fun getDocumentMultipleDiscardWarnings() {
-
+        val executionProfile = ExecutionProfile.default()
         val logEntry = LogEntry("WARN", "181 prepared statements discarded in the last minute because cache limit reached (125 MB)", "20200723184102", "node1")
         // 5000 entries, for a single node, with 30 days of logs, ~ 6.9 per hour, above the threshold of 1 per hour.
         val entries : MutableList<LogEntry> = MutableList(5000) { logEntry }
@@ -94,7 +94,7 @@ class PreparedStatementsDiscardedTest {
         every { cluster.getLogDurationsInHours(ExecutionProfile.default().limits.numberOfLogDays) } returns mapOfDurations
 
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("+prepared +statements +discarded", LogLevel.WARN,1000000) } returns entries
+        every { searcher.search("+prepared +statements +discarded", LogLevel.WARN,executionProfile.limits.preparedStatementWarnings) } returns entries
 
         val prepared = PreparedStatements()
         val recs: MutableList<Recommendation> = mutableListOf()
@@ -119,9 +119,10 @@ class PreparedStatementsDiscardedTest {
         every { cluster.metricServer } returns metricsServer
         every { cluster.getLogDurationsInHours(ExecutionProfile.default().limits.numberOfLogDays) } returns mapOfDurations
 
+        val executionProfile = ExecutionProfile(Limits( preparedStatementWarnings = 5000))
+
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("+prepared +statements +discarded", LogLevel.WARN,5000) } returns entries
-        val executionProfile = ExecutionProfile(Limits(90,5000, 5000))
+        every { searcher.search("+prepared +statements +discarded", LogLevel.WARN,executionProfile.limits.preparedStatementWarnings) } returns entries
 
         val prepared = PreparedStatements()
         val recs: MutableList<Recommendation> = mutableListOf()

@@ -73,7 +73,7 @@ class TombstoneWarnings : DocumentSection {
         }
         // Recommendation - trigger if more than 100 warnings in a single day.
         // This value is not normalized out based on the uptime per node, the complexity involved is too high vs the benefit to the trigger.
-        if (byDay.filter { it.value >= NUMBER_OF_WARNINGS_PER_DAY_TO_RECOMMEND }.size > 1) {
+        if (byDay.filter { it.value >= executionProfile.limits.tombstoneWarningsPerDayThreshold }.size > 1) {
             recs.immediate(RecommendationType.DATAMODEL ,"We recommend reviewing the data model of ${byTableCounts.size} table(s), to remediate the number of tombstone warnings. DataStax Services can provide assistance in this activity.")
         }
 
@@ -86,9 +86,4 @@ class TombstoneWarnings : DocumentSection {
         }
         return compileAndExecute("operations/operations_tombstone_warnings.md", args)
     }
-
-    companion object {
-        const val NUMBER_OF_WARNINGS_PER_DAY_TO_RECOMMEND = 100
-    }
-
 }

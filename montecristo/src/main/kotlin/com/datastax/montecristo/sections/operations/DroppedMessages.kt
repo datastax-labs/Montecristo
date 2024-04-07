@@ -25,6 +25,7 @@ import com.datastax.montecristo.sections.structure.Recommendation
 import com.datastax.montecristo.sections.structure.RecommendationType
 import com.datastax.montecristo.sections.structure.immediate
 import com.datastax.montecristo.utils.MarkdownTable
+import com.github.andrewoma.kommon.script.exec
 
 /**
  * Reports on the various dropped messages.  Currently we only have mutations and reads but it's easy to add more.
@@ -55,9 +56,9 @@ class DroppedMessages : DocumentSection {
         // The log files can have far more warnings potentially
         val logDroppedMessageWarnings = logSearcher.search(
             "+MUTATION +messages +were +dropped +in +the +last",
-            limit = LIMIT
+            limit = executionProfile.limits.droppedMessages
         ).mapNotNull { DroppedOperationMessage.fromLogEntry(it) }
-        val hitMessageLimit = logDroppedMessageWarnings.size == LIMIT // did we hit the search limit?
+        val hitMessageLimit = logDroppedMessageWarnings.size == executionProfile.limits.droppedMessages // did we hit the search limit?
         // map of node to mutation values, (count of messages, sum of internal drops and sum of cross node drops)
         val sortedResults = processDroppedMutationLogMessages(logDroppedMessageWarnings)
         // map of node to log duration
@@ -67,7 +68,7 @@ class DroppedMessages : DocumentSection {
         val logDropMd = MarkdownTable("Node", "Log Duration (Days)", "Total Internal Mutation Drops", "Total Cross-Node Mutations Dropped", "Number of Distinct Hours with Mutations Dropped", "Drops per Hour").orMessage("There were no dropped mutations within the logs.")
         for (node in sortedResults) {
             val droppedMutationsPerHour = (node.value.sumOfInternalDrops + node.value.sumOfCrossNodeDrops) / (mapOfDurations.getValue(node.key))
-            if (droppedMutationsPerHour > DROP_PER_HOUR_LIMIT) {
+            if (droppedMutationsPerHour > executionProfile.limits.droppedMessagesPerHourThreshold) {
                 dropRecommendationExceeded = true
             }
             logDropMd.addRow()
@@ -88,10 +89,10 @@ class DroppedMessages : DocumentSection {
         }
         if (hitMessageLimit) {
             // this scenario is incredibly unlikely, but included just in case.
-            recs.immediate(RecommendationType.OPERATIONS,"There are over $hitMessageLimit separate dropped mutation warnings within the logs. We recommend further investigation into the extremely high level of dropped mutations.")
+            recs.immediate(RecommendationType.OPERATIONS,"There are over ${executionProfile.limits.droppedMessages} separate dropped mutation warnings within the logs. We recommend further investigation into the extremely high level of dropped mutations.")
         } else if ( dropRecommendationExceeded) {
             // trigger a recommendation if the number of dropped messages per hour exceeds the trigger limit
-            recs.immediate(RecommendationType.OPERATIONS,"There are over $DROP_PER_HOUR_LIMIT dropped mutations occurring on average every hour. We recommend further investigation into this elevated level of dropped mutations.")
+            recs.immediate(RecommendationType.OPERATIONS,"There are over ${executionProfile.limits.droppedMessagesPerHourThreshold} dropped mutations occurring on average every hour. We recommend further investigation into this elevated level of dropped mutations.")
         }
         return compileAndExecute("operations/operations_dropped_messages.md", args)
     }
@@ -116,8 +117,4 @@ class DroppedMessages : DocumentSection {
 
     // data class just to hold the results of the maps together
     private data class DroppedMutationMessageCounts( val countOfMessages : Int, val sumOfInternalDrops : Long, val sumOfCrossNodeDrops : Long, val numberOfHoursWithDrops : Int)
-    companion object {
-        private const val LIMIT = 1000000
-        private const val DROP_PER_HOUR_LIMIT = 25
-    }
 }

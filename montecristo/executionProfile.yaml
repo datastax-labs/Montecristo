@@ -6,3 +6,45 @@ limits:
 
     # Aggregation Warnings to check for
     aggregationWarnings: 1000000
+
+    # Batch Size Warnings to check for
+    batchSizeWarnings: 1000000
+
+    # Dropped Hint messages to check for
+    droppedHints: 100000
+
+    # Dropped Messages to Look for
+    droppedMessages: 1000000
+
+    # Dropped Messages per Hour before warning
+    droppedMessagesPerHourThreshold: 25
+
+    # Gossip Pause Warning Message to check for
+    gossipPauseWarnings: 1000000
+
+    # Minimum amount of time paused to trigger recommendation
+    gossipPauseTimePercentageThreshold: 5.0
+
+    # Hinted Handoff messages to check for
+    hintedHandoffMessages: 1000000
+
+    # Hints per hours recommendation threshold
+    hintedHandoffPerHourThreshold: 25
+
+    # Prepared Statements discarded messages to check for
+    preparedStatementWarnings: 1000000
+
+    # Prepared Statements Discarded Messages Per Hour Threshold
+    preparedStatementMessagesPerHourThreshold: 1
+
+    # Repair Errors to search for
+    repairErrorMessages: 10000
+
+    # Number of days of repair errors to report on
+    repairErrorMessagesDisplayedInReport: 14
+
+    # Number of tombstone warnings per day permitted threshold
+    tombstoneWarningsPerDayThreshold: 100
+
+    # Token balance threshold - % difference allowed from largest to smallest owners
+    tokenOwnershipPercentageImbalanceThreshold: 0.2

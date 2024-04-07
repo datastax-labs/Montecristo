@@ -52,7 +52,7 @@ internal class BatchesTest {
             "\n" +
             "Single partition batches do not have the overhead of multi-partition batches. They do not require the batch log and are executed atomically and in isolation as a single mutation.\n" +
             "\n" +
-            "There are over a million warnings in the logs regarding large batches.\n" +
+            "There are over 1000000 warnings in the logs regarding large batches.\n" +
             "The largest batch we have seen was 100 Kb with an average size of 100.0 Kb.\n"
 
     @Test

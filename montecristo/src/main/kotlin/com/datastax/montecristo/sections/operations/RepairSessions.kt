@@ -42,14 +42,14 @@ class RepairSessions : DocumentSection {
         val args = super.createDocArgs(cluster)
 
         // replace with search
-        val searchErrors = logSearcher.search("repair", LogLevel.ERROR, LIMIT)
-        if (searchErrors.count() > 0) {
+        val searchErrors = logSearcher.search("repair", LogLevel.ERROR, executionProfile.limits.repairErrorMessages)
+        if (searchErrors.isNotEmpty()) {
             args["numWarnings"] = searchErrors.count()
         }
 
-        if (searchErrors.size >= LIMIT) {
+        if (searchErrors.size >= executionProfile.limits.repairErrorMessages) {
             // hit the search limit
-            args["hitLimit"] = LIMIT
+            args["hitLimit"] = executionProfile.limits.repairErrorMessages
         }
 
         val repairErrorCountByNode = searchErrors.groupingBy { it.host }.eachCount()
@@ -64,7 +64,7 @@ class RepairSessions : DocumentSection {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val repairErrorCountByDay = searchErrors.groupingBy { it.getDate().truncatedTo(ChronoUnit.DAYS) }.eachCount()
         val repairFailuresPerDateTable = MarkdownTable("Date", "Number of Repair Failures")
-        repairErrorCountByDay.toList().sortedByDescending { (value, count) -> value }.take(NUMBER_OF_DATES_TO_REPORT).toMap().forEach {
+        repairErrorCountByDay.toList().sortedByDescending { (value, count) -> value }.take(executionProfile.limits.repairErrorMessagesDisplayedInReport).toMap().forEach {
             repairFailuresPerDateTable.addRow()
                 .addField(it.key.format(formatter) ?: "Unknown Date" )
                 .addField(it.value)
@@ -73,7 +73,7 @@ class RepairSessions : DocumentSection {
         if (searchErrors.size > 250) {
             recs.immediate(RecommendationType.OPERATIONS,"Repairs on the cluster are failing in sufficient numbers to be a cause of concern. We recommend investigating the root cause of the failures and impact to data consistency at rest and when served for reads.")
         }
-        args["numberOfDatesToReport"] = NUMBER_OF_DATES_TO_REPORT
+        args["numberOfDatesToReport"] = executionProfile.limits.repairErrorMessagesDisplayedInReport
         args["warningsByDate"] = repairFailuresPerDateTable.toString()
 
         // are repairs running?
@@ -81,7 +81,7 @@ class RepairSessions : DocumentSection {
         // calculate the latest log date, minus 10 days
         val maxLogDate = logDurations.map { Utils.tryParseDate (it.value.second ) }.maxByOrNull { it } ?: LocalDateTime.now()
 
-        val repairEntries = logSearcher.search("RepairSession.java", LogLevel.INFO, LIMIT)
+        val repairEntries = logSearcher.search("RepairSession.java", LogLevel.INFO, executionProfile.limits.repairErrorMessages)
         val isRepairRunning = repairEntries.any { it.getDate().isAfter(maxLogDate.minusDays(10)) }
         if (isRepairRunning) {
             args["repairsFound"] = "Repairs are being run on the cluster."
@@ -115,10 +115,4 @@ class RepairSessions : DocumentSection {
         }
         return compileAndExecute("operations/operations_logs_failed_repair.md", args)
     }
-
-    companion object {
-        private const val LIMIT = 100000
-        private const val NUMBER_OF_DATES_TO_REPORT = 14
-    }
-
 }

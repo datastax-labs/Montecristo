@@ -60,9 +60,9 @@ class HintedHandoffTasks : DocumentSection {
 
         // Hinted Handoffs from the log files can have far more / less than JMX potentially
         val logHintedHandoffMessagesPerNode = logSearcher.search("+Finished +hinted +handoff +to +endpoint",
-            limit = MESSAGE_SEARCH_LIMIT
+            limit = executionProfile.limits.hintedHandoffMessages
         ).groupingBy { it.host }.eachCount()
-        val hitLogMessageLimit = logHintedHandoffMessagesPerNode.size == MESSAGE_SEARCH_LIMIT // did we hit the search limit?
+        val hitLogMessageLimit = logHintedHandoffMessagesPerNode.size == executionProfile.limits.hintedHandoffMessages // did we hit the search limit?
 
         val mapOfDurations: Map<String, Double> = cluster.getLogDurationsInHours(executionProfile.limits.numberOfLogDays)
 
@@ -83,15 +83,10 @@ class HintedHandoffTasks : DocumentSection {
             recs.immediate(RecommendationType.OPERATIONS,"There are over $hitLogMessageLimit separate hint dispatch messages within the logs. We recommend further investigation into the high level of hint activity.")
         }
         val maxHintsPerHour = hintsPerHourSet.maxOf { it }
-        if (maxHintsPerHour > HINTS_PER_HOUR_LIMIT) {
+        if (maxHintsPerHour > executionProfile.limits.hintedHandoffPerHourThreshold) {
             recs.immediate(RecommendationType.OPERATIONS,"The highest average hints per hours for a node is ${Utils.round(maxHintsPerHour)}. A value this high indicates that the cluster is facing stability issues and should be investigated further.")
         }
 
         return compileAndExecute("operations/operations_hinted_handoff_tasks.md", args)
-    }
-
-    companion object {
-        private const val MESSAGE_SEARCH_LIMIT = 1000000
-        private const val HINTS_PER_HOUR_LIMIT = 25
     }
 }

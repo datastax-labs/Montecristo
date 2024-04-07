@@ -47,7 +47,7 @@ class Ring : DocumentSection {
         val partitioner = if (cluster.nodes.first().cassandraYaml.partitioner == Partitioner.RANDOM.yamlSetting) { Partitioner.RANDOM } else { Partitioner.MURMUR }
         val tokenResults =  calculateTokenPercentage(partitioner, nodeRingTokens)
 
-        val balancedResults = isTokenRingBalanced(tokenResults, MAX_PERCENTAGE_DIFFERENCE)
+        val balancedResults = isTokenRingBalanced(tokenResults, executionProfile.limits.tokenOwnershipPercentageImbalanceThreshold)
         val unbalancedDcCount = balancedResults.count { d -> !d.value }
         if (unbalancedDcCount > 0) {
             val dcNameList = balancedResults.filter { d -> !d.value }.toList().joinToString { it.first }
@@ -124,9 +124,5 @@ class Ring : DocumentSection {
             results[datacenter.key] = max * (1.0 - maximumPercentageDifference) < min
         }
         return results
-    }
-
-    companion object {
-        private const val MAX_PERCENTAGE_DIFFERENCE = 0.20
     }
 }

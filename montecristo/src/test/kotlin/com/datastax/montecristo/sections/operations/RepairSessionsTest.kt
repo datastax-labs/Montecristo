@@ -34,9 +34,10 @@ internal class RepairSessionsTest {
 
     @Test
     fun getDocumentNoFailures() {
+        val executionProfile = ExecutionProfile.default()
         val cluster = mockk<Cluster>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("repair") } returns emptyList()
+        every { searcher.search("repair", LogLevel.ERROR, executionProfile.limits.repairErrorMessages) } returns emptyList()
 
         val recs: MutableList<Recommendation> = mutableListOf()
         val repair = RepairSessions()
@@ -48,13 +49,14 @@ internal class RepairSessionsTest {
 
     @Test
     fun getDocumentSingleFailures() {
+        val executionProfile = ExecutionProfile.default()
         val entries: MutableList<LogEntry> = mutableListOf()
         val logEntry = LogEntry("ERROR", "ERROR [Repair-Task:1] 2022-01-22 13:42:15,243  RepairRunnable.java:340 - Repair failed:","20200723184102" ,"node1")
         entries.add(logEntry)
 
         val cluster = mockk<Cluster>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("repair", LogLevel.ERROR, 100000) } returns entries.toList()
+        every { searcher.search("repair", LogLevel.ERROR, executionProfile.limits.repairErrorMessages) } returns entries.toList()
 
         val recs: MutableList<Recommendation> = mutableListOf()
         val repair = RepairSessions()
@@ -67,13 +69,14 @@ internal class RepairSessionsTest {
 
     @Test
     fun getDocumentTwoFailuresDifferentNodes() {
+        val executionProfile = ExecutionProfile.default()
         val entries: MutableList<LogEntry> = mutableListOf()
         entries.add(LogEntry("ERROR", "ERROR [Repair-Task:1] 2022-01-22 13:42:15,243  RepairRunnable.java:340 - Repair failed:","20200723184102" ,"node1"))
         entries.add(LogEntry("ERROR", "ERROR [Repair-Task:1] 2022-01-22 13:42:15,243  RepairRunnable.java:340 - Repair failed:","20200723184102" ,"node2"))
 
         val cluster = mockk<Cluster>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("repair", LogLevel.ERROR, 100000) } returns entries.toList()
+        every { searcher.search("repair", LogLevel.ERROR, executionProfile.limits.repairErrorMessages) } returns entries.toList()
 
         val recs: MutableList<Recommendation> = mutableListOf()
         val repair = RepairSessions()
@@ -87,6 +90,7 @@ internal class RepairSessionsTest {
 
     @Test
     fun getDocumentThreeNodesGapsInTimeDifferentNodes() {
+        val executionProfile = ExecutionProfile.default()
         val entries: MutableList<LogEntry> = mutableListOf()
         entries.add(LogEntry("ERROR", "ERROR [Repair-Task:1] 2022-01-22 13:42:15,243  RepairRunnable.java:340 - Repair failed:","20200723184102" ,"node1"))
         entries.add(LogEntry("ERROR", "ERROR [Repair-Task:1] 2022-01-22 13:42:15,243  RepairRunnable.java:340 - Repair failed:","20200723184102" ,"node1"))
@@ -103,7 +107,7 @@ internal class RepairSessionsTest {
 
         val cluster = mockk<Cluster>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("repair", LogLevel.ERROR, 100000) } returns entries.toList()
+        every { searcher.search("repair", LogLevel.ERROR, executionProfile.limits.repairErrorMessages) } returns entries.toList()
 
         val recs: MutableList<Recommendation> = mutableListOf()
         val repair = RepairSessions()
@@ -123,6 +127,7 @@ internal class RepairSessionsTest {
 
     @Test
     fun getDocumentTriggerRecommendation () {
+        val executionProfile = ExecutionProfile.default()
         val entries: MutableList<LogEntry> = mutableListOf()
         for (i in 1..150) {
             entries.add(
@@ -145,7 +150,7 @@ internal class RepairSessionsTest {
 
         val cluster = mockk<Cluster>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        every { searcher.search("repair", LogLevel.ERROR, 100000) } returns entries.toList()
+        every { searcher.search("repair", LogLevel.ERROR, executionProfile.limits.repairErrorMessages) } returns entries.toList()
 
         val recs: MutableList<Recommendation> = mutableListOf()
         val repair = RepairSessions()
