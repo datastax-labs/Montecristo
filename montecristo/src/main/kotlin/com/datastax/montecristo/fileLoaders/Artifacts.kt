@@ -181,7 +181,7 @@ class Artifacts(
         if (jvmSettings.gcAlgorithm == GCAlgorithm.UNKNOWN) {
             val settingsFromOptions = getJvmSettingsFromOptions(fp.absolutePath)
             if (settingsFromOptions.isNotEmpty()) {
-                loadErrors.add(LoadError(hostname, "GC settings have been estimated from jvm-server.options and should be manually validated"))
+                loadErrors.add(LoadError(hostname, "GC settings have been estimated from all jvm(.*-server)?.options files combined and MUST be manually validated"))
                 jvmSettings = JVMSettingsParser.parse(settingsFromOptions)
             }
             else {
@@ -372,33 +372,37 @@ class Artifacts(
     }
 
     private fun getJvmSettingsFromOptions(searchDirectory: String): String {
-        logger.info("Attempting to reconstruct JVM settings from jvm-server.options...")
-        var jvmSettingsList: List<String> = listOf()
-        val jvmFiles = FileHelpers.getFilesWithName(searchDirectory, "jvm(-server)?.options")
+        logger.info("Attempting to reconstruct JVM settings from jvm(.*-server)?.options...")
+        val jvmFiles = FileHelpers.getFilesWithName(searchDirectory, "jvm(.*-server)?.options")
         if (jvmFiles.isNotEmpty()) {
-            val jvmServerFiles = jvmFiles.filter { it.endsWith("jvm-server.options") }
-            val jvmFlags = if (jvmServerFiles.isNotEmpty()) {
-                jvmServerFiles.first().readLines().filter { !it.startsWith("#") && it.contains("-X") }.joinToString(" ")
-            } else {
-                jvmFiles.first().readLines().filter { !it.startsWith("#") && it.contains("-X") }.joinToString(" ")
-            }
-            if (!jvmSettingsList.contains("-Xmx")) {
-                val maxHeapSize =
-                    FileHelpers.getFilesWithName(searchDirectory, "cassandra-env.sh").first().readLines().filter {
-                        it.startsWith("MAX_HEAP_SIZE=")
-                    }.joinToString(" ") { " -Xmx${it.replace("MAX_HEAP_SIZE=\"", "").replace("\"", "")}" }
+            val jvmServerFiles = jvmFiles.filter { it.endsWith("-server.options") }
 
-                val newGenSize =
-                    FileHelpers.getFilesWithName(searchDirectory, "cassandra-env.sh").first().readLines().filter {
-                        it.startsWith("HEAP_NEWSIZE=")
-                    }.joinToString(" ") { " -Xmn${it.replace("HEAP_NEWSIZE=\"", "").replace("\"", "")}" }
-                jvmSettingsList = listOf("$jvmFlags $maxHeapSize $newGenSize")
+            // XXX flags from different jvm*-server.options files are appended. half of these are not actually used.
+            var jvmFlags = if (jvmServerFiles.isNotEmpty()) {
+                    jvmServerFiles.flatMap { it.readLines() }.filter { !it.startsWith("#") && it.contains("-X") }.joinToString(" ")
+                } else {
+                    jvmFiles.flatMap { it.readLines() }.filter { !it.startsWith("#") && it.contains("-X") }.joinToString(" ")
+                }
+
+            if (!jvmFlags.contains("-Xmx")) {
+                logger.info("Attempting to reconstruct JVM settings from cassandra-env.sh...")
+                val envFiles = FileHelpers.getFilesWithName(searchDirectory, "cassandra-env.sh")
+                if (envFiles.isNotEmpty()) {
+
+                    jvmFlags += envFiles.first().readLines().filter {
+                            it.startsWith("MAX_HEAP_SIZE=")
+                        }.joinToString(" ") { " -Xmx${it.replace("MAX_HEAP_SIZE=\"", "").replace("\"", "")}" }
+
+                    jvmFlags += envFiles.first().readLines().filter {
+                            it.startsWith("HEAP_NEWSIZE=")
+                        }.joinToString(" ") { " -Xmn${it.replace("HEAP_NEWSIZE=\"", "").replace("\"", "")}" }
+                }
             }
+            return jvmFlags
         } else {
-            // no jvm.options.
+            // no jvm(.*-server)?.options.
             return ""
         }
-        return jvmSettingsList.first()
     }
 
     private fun getVersionFileContents(nodeFilePath: String): List<String> {
@@ -483,7 +487,11 @@ class Artifacts(
     }
 
     private fun <T> loadViaParser(parentFolder: File, fileNames: List<String>, parser: IFileParser<T>, hostname: String, loadErrors: MutableList<LoadError>, noFileReturn: T): T {
-        val dataFile = FileHelpers.getFile(parentFolder, fileNames)
+
+        val dataFile = FileHelpers.getFile(
+            parentFolder,
+            fileNames.flatMap {  if (it.endsWith(".txt")) listOf(it) else listOf(it, "$it.txt") })
+
         return if (dataFile.exists()) {
             try {
                 parser.parse(dataFile.readLines())

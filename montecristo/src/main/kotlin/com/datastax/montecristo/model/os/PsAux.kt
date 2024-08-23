@@ -19,12 +19,12 @@ package com.datastax.montecristo.model.os
 data class PsAux(val data : List<String>, val path : String) {
 
     fun getNodeProcessLine() : String? {
-        return data.firstOrNull{ it.contains("CassandraDaemon")  ||
-                it.contains("DseModule") ||
-                it.contains("/usr/share/cassandra") ||
-                it.contains("/usr/local/cassandra") ||
-                it.contains("/usr/share/dse/cassandra") ||
-                it.contains("/opt/dse/") }
+        return data.firstOrNull{ it.contains("CassandraDaemon") }
+                ?: data.firstOrNull{ it.contains("DseModule") }
+                ?: data.firstOrNull{ it.contains("/usr/share/cassandra") ||
+                    it.contains("/usr/local/cassandra") ||
+                    it.contains("/usr/share/dse/cassandra") ||
+                    it.contains("/opt/dse/") }
     }
 
     fun getCassandraRunningUser() : String {
