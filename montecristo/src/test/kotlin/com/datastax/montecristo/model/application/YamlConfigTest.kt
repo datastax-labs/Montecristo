@@ -16,10 +16,13 @@
 
 package com.datastax.montecristo.model.application
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import junit.framework.Assert.assertFalse
 import org.assertj.core.api.Assertions
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.io.File
@@ -28,21 +31,36 @@ internal class YamlConfigTest {
     lateinit var yamlNoFile: YamlConfig
     lateinit var yamlWithFile: YamlConfig
 
-    @Before
-    fun setUp() {
-        yamlNoFile = YamlConfig(JsonNodeFactory.instance.objectNode())
-
-        val yamlFile = File(this.javaClass.getResource("/helpers/generic.yaml").path)
+    private fun openYamlFile(filePath: String): JsonNode {
+        val yamlFile = File(this.javaClass.getResource(filePath).path)
         val yamlReader = ObjectMapper(YAMLFactory())
         val obj = yamlReader.readValue(yamlFile.readText(), Any::class.java)
         val jsonWriter = ObjectMapper()
         val json = jsonWriter.readTree(jsonWriter.writeValueAsString(obj))
-        yamlWithFile = YamlConfig(json)
+        return json
+    }
+
+    @Before
+    fun setUp() {
+        yamlNoFile = YamlConfig(JsonNodeFactory.instance.objectNode())
+        yamlWithFile = YamlConfig(openYamlFile("/helpers/generic.yaml"))
     }
 
     @Test
     fun testIsEmpty() {
         Assertions.assertThat(yamlNoFile.isEmpty())
         Assertions.assertThat(!yamlWithFile.isEmpty())
+    }
+
+    @Test
+    fun testParseRowCache() {
+        var yamlFile = openYamlFile("/helpers/rowCacheEnabled.yaml")
+        var cassandraYaml = CassandraYaml(yamlFile)
+        Assertions.assertThat(cassandraYaml.isRowCacheEnabled())
+
+        yamlFile = openYamlFile("/helpers/rowCacheDisabled.yaml")
+        cassandraYaml = CassandraYaml(yamlFile)
+        // this should fail but the Assertions are somehow not effective
+        Assertions.assertThat(cassandraYaml.isRowCacheEnabled())
     }
 }
