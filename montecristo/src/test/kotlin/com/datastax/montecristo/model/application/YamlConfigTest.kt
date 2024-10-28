@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import junit.framework.Assert.assertFalse
 import org.assertj.core.api.Assertions
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -56,11 +55,11 @@ internal class YamlConfigTest {
     fun testParseRowCache() {
         var yamlFile = openYamlFile("/helpers/rowCacheEnabled.yaml")
         var cassandraYaml = CassandraYaml(yamlFile)
-        Assertions.assertThat(cassandraYaml.isRowCacheEnabled())
+        assertTrue(cassandraYaml.isRowCacheEnabled())
 
         yamlFile = openYamlFile("/helpers/rowCacheDisabled.yaml")
         cassandraYaml = CassandraYaml(yamlFile)
         // this should fail but the Assertions are somehow not effective
-        Assertions.assertThat(cassandraYaml.isRowCacheEnabled())
+        assertTrue(cassandraYaml.isRowCacheEnabled())
     }
 }
