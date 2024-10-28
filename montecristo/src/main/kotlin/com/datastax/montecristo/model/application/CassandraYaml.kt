@@ -32,7 +32,7 @@ data class CassandraYaml(val data : JsonNode)  : YamlConfig(data) {
     val memtableAllocationType get() = get("memtable_allocation_type")
     val authorizer get() = get("authorizer")
     val rowCacheSizeInMB get() = (
-            get("row_cache_size", "0").replace("MiB", "")
+            get("row_cache_size", "0").replace("\\D+".toRegex(), "")
             ).toInt()
      fun isRowCacheEnabled(): Boolean {
         return (rowCacheSizeInMB.toString().toInt() > 0)
