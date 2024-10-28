@@ -22,7 +22,8 @@ import java.time.LocalDateTime
 data class TombstoneWarningMessage(val liveRows: Long, val tombstoneRows: Long, val tableName: String, val date: LocalDateTime, val host: String) {
 
     companion object {
-        val regex = ".*Read (\\d+) live rows and (\\d+) tombstone cells for query.*FROM (.*) WHERE|LIMIT .*".toRegex()
+        val regex = ".*Read (\\d+) live rows and (\\d+) tombstone cells for query.*FROM (\\S+).*".toRegex()
+
         fun fromLogEntry(entry: LogEntry): TombstoneWarningMessage? {
             val message = entry.message!!
             val result = regex.find(message)
