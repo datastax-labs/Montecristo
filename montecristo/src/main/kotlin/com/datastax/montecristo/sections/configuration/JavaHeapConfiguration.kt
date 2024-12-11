@@ -75,7 +75,7 @@ class JavaHeapConfiguration : DocumentSection {
             if (parsedJvmSettings.newGenSize < 2_000_000_000 && parsedJvmSettings.heapSize >= 4_000_000_000) {
                 // New Gen size is too small
                 recs.immediate(RecommendationType.CONFIGURATION,"""
-                    We recommend allocating up to 50% of the total heap size to the new gen, especially in read heavy workloads. The current heap's new generation size is smaller than optimal (${ByteCountHelper.humanReadableByteCount(parsedJvmSettings.newGenSize, ByteCountHelperUnits.BINARY)}).
+                    We recommend allocating up to 50% of the total heap size to the new gen, especially in read heavy workloads. The current new generation size is smaller than optimal (${ByteCountHelper.humanReadableByteCount(parsedJvmSettings.newGenSize, ByteCountHelperUnits.BINARY)}).
                 """.trimIndent()
                 )
             }
@@ -91,7 +91,7 @@ class JavaHeapConfiguration : DocumentSection {
             // G1GC recommendations
             if (ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kB") < 40_000_000_000) {
                 // Available RAM is too small for G1
-                recs.immediate(RecommendationType.CONFIGURATION,"G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently don't have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
+                recs.immediate(RecommendationType.CONFIGURATION,"G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently do not have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
             }
             if (ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kB") >= 40_000_000_000 && parsedJvmSettings.heapSize < 20_000_000_000) {
                 // Available RAM is too small for G1

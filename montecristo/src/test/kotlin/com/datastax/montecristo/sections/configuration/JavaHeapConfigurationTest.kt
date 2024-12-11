@@ -137,7 +137,7 @@ internal class JavaHeapConfigurationTest {
         val template = jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(1)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
-        assertThat(recs[0].longForm).isEqualTo("We recommend allocating up to 50% of the total heap size to the new gen, especially in read heavy workloads. The current heap's new generation size is smaller than optimal (1.0 GiB).")
+        assertThat(recs[0].longForm).isEqualTo("We recommend allocating up to 50% of the total heap size to the new gen, especially in read heavy workloads. The current new generation size is smaller than optimal (1.0 GiB).")
         assertThat(template).isEqualTo(lowNewGenTemplate)
     }
 
@@ -230,7 +230,7 @@ internal class JavaHeapConfigurationTest {
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(1)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
-        assertThat(recs[0].longForm).isEqualTo("G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently don't have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
+        assertThat(recs[0].longForm).isEqualTo("G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently do not have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
     }
 
     @Test
