@@ -4,17 +4,20 @@
 Compaction is used by the Log-structured Merge Tree storage engine in {{software}} to reclaim wasted disk and improve the performance of the read path. It is a key component of
 {{software}} performance tuning, and is controlled by the compaction table property.  
 
-The rate at which data can be compacted is controlled by `compaction_throughput_mb_per_sec` and the number of simultaneous compactors is controlled by `concurrent_compactors`.  
+The rate at which data can be compacted is controlled by `compaction_throughput` (or `compaction_throughput_mb_per_sec` in versions before 4.1) and the number of simultaneous compactors is controlled by `concurrent_compactors`.  
 See the {{software}}-Configuration/Compaction section above.
 
 There is a useful setting for logging when partitions get to be over a certain size, `compaction_large_partition_warning_threshold_mb`, which defaults to 100MB.
+
+Changing compaction strategies should be done carefully, one table at a time.  Don't change the next table's compaction strategy until pending compactions are back down to a normal value.  In addition it is important to change the compaction strategy for a table on just one node first.  This is done using jmx, more info on the process can be read [here](https://support.datastax.com/s/article/Change-CompactionStrategy-and-subproperties-via-JMX).  After the table has finished re-compacting to the new strategy, validate the performance and statistics are improved as expected.  Once validated proceed with making the compaction strategy change cluster-wide via an `ALTER TABLE …` schema change cql statement.
 
 
 ### Compaction Strategies
 
 
-There are currently four compaction strategies available in {{software}}:
+There are currently five compaction strategies available in {{software}}:
 
+* **UnifiedCompactionStrategy** (UCS), available in Cassandra 5.0 and HCD, is a compaction strategy that combines the best of the other strategies plus new features.  It is recommended for most workloads, whether read-heavy, write-heavy, mixed read-write, or time-series. There is no need to use legacy compaction strategies, because UCS can be configured to behave like any of them.
 * **SizeTieredCompactionStrategy** (STCS) the default, good for data that is written to for a short time and then mostly read from. It groups SSTables together based on their size.  
 * **DateTieredCompactionStrategy** (DTCS) is used for data that is written in time series order. It groups data together by timestamp, and stops compacting older data. This strategy is deprecated and should not be used anymore.
 * **LeveledCompactionStrategy** (LCS) is used for low latency read or high overwrite and TTL workloads. It groups SSTables into levels of files that are the same size.  
@@ -26,9 +29,17 @@ The compaction strategies used in this cluster (k = thousand, M = million, B = b
 
 {{tables}}
 
+{{#toUCS}}
+
+We recommend changing the compaction strategy to `UnifiedCompactionStrategy`:
+
+{{toUCS}}
+
+{{/toUCS}}
+
 {{#toSTCS}}
 
-We recommend evaluating the following tables to use `SizeTieredCompactionStrategy`:
+We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, otherwise evaluate the following tables to use `SizeTieredCompactionStrategy`:
 
 {{toSTCS}}
 
@@ -36,7 +47,7 @@ We recommend evaluating the following tables to use `SizeTieredCompactionStrateg
 
 {{#toLCS}}
 
-We recommend evaluating the following tables to use `LeveledCompactionStrategy`:
+We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, otherwise evaluate the following tables to use `LeveledCompactionStrategy`:
 
 {{toLCS}}
 
@@ -44,7 +55,7 @@ We recommend evaluating the following tables to use `LeveledCompactionStrategy`:
 
 {{#toTWCS}}
 
-We recommend evaluating the opportunity for the following tables to use `TimeWindowCompactionStrategy` as they have been identified as potential time series or are currently using the deprecated `DateTieredCompactionStrategy`:
+We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, otherwise evaluate the opportunity for the following tables to use `TimeWindowCompactionStrategy` as they have been identified as potential time series or are currently using the deprecated `DateTieredCompactionStrategy`:
 
 {{toTWCS}}
 
@@ -68,6 +79,31 @@ The following tables have pending compactions:
 
 {{/tablesWithPendingMd}}
 
+### UnifiedCompactionStrategy (UCS)
+
+The `UnifiedCompactionStrategy` (UCS) is recommended for most workloads, whether read-heavy, write-heavy, mixed read-write, or time-series. There is no need to use legacy compaction strategies, because UCS can be configured to behave like any of them.
+
+UCS is a compaction strategy that combines the best of the other strategies plus new features. UCS has been designed to maximize the speed of compactions, which is crucial for high-density nodes, using an unique sharding mechanism that compacts partitioned data in parallel. And whereas STCS, LCS, or TWCS will require full compaction of the data if the compaction strategy is changed, UCS can change parameters in flight to switch from one strategy to another. In fact, a combination of different compaction strategies can be used at the same time, with different parameters for each level of the hierarchy. Finally, UCS is stateless, so it does not rely on any metadata to make compaction decisions.
+
+Two key concepts refine the definition of the grouping:
+ - Tiered and levelled compaction can be generalized as equivalent, because both create exponentially-growing levels based on the size of SSTables (or non-overlapping SSTable runs). Thus, a compaction is triggered when more than a given number of SSTables are present on one level.
+ - size can be replaced by density, allowing SSTables to be split at arbitrary points when the output of a compaction is written, while still producing a leveled hierarchy. Density is defined as the size of an SSTable divided by the width of the token range it covers.
+
+#### Migration from Other Strategies
+
+The UnifiedCompactionStrategy (UCS) can be configured to behave like other compaction strategies, making migration straightforward. It also provides advanced options for optimizing specific workload patterns.
+
+For LCS behaviour configure it with `ALTER TABLE mykeyspace.foo WITH COMPACTION = {'class': 'UnifiedCompactionStrategy','scaling_parameters': 'L10'};`
+
+For LCS behaviour on very read-heavy Key Value tables use `COMPACTION = {'class': 'UnifiedCompactionStrategy', 'scaling_parameters': 'L10', 'target_sstable_size': '256MiB', 'base_shard_count': '8' }`
+
+For STCS behaviour configure it with `ALTER TABLE mykeyspace.foo WITH COMPACTION = {'class': 'UnifiedCompactionStrategy','scaling_parameters': 'T4'};`
+
+For STCS behaviour on very write-heavy tables use `COMPACTION = { 'class': 'UnifiedCompactionStrategy', 'scaling_parameters': 'T4', 'target_sstable_size': '1GiB', 'base_shard_count': '4'}`
+
+For TWCS behaviour configure it with `ALTER TABLE mykeyspace.foo WITH COMPACTION = { 'class': 'UnifiedCompactionStrategy', 'scaling_parameters': 'T8', 'target_sstable_size': '512MiB', 'base_shard_count': '8', 'expired_sstable_check_frequency_seconds': '300'};`
+
+For more information read the [documentation](https://cassandra.apache.org/doc/5.0/cassandra/managing/operating/compaction/ucs.html).
 
 ### TimeWindowCompactionStrategy
 
@@ -85,7 +121,7 @@ What is important with the order of writes is to avoid writes landing in non-adj
 
 #### How TWCS Data Expires
 
-When data goes past it’s time-to-live (TTL) value it is considered tombstoned, and is not readable from the client. Tombstoned data is kept for a `gc_grace_seconds` amount of time. After `gc_grace_seconds` has passed then it is considered expired. Other compaction strategies will remove this expired data once it becomes included in a compaction.
+When data goes past its time-to-live (TTL) value it is considered tombstoned, and is not readable from the client. Tombstoned data is kept for a `gc_grace_seconds` amount of time. After `gc_grace_seconds` has passed then it is considered expired. Other compaction strategies will remove this expired data once it becomes included in a compaction.
 
 TWCS removes expired data from the disk in a different manner. There are two different mechanisms involved.
  - Single SSTable Tombstone Compaction

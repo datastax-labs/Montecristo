@@ -24,6 +24,7 @@ import com.datastax.montecristo.sections.DocumentSection
 import com.datastax.montecristo.sections.structure.Recommendation
 import com.datastax.montecristo.sections.structure.RecommendationType
 import com.datastax.montecristo.sections.structure.immediate
+import com.datastax.montecristo.sections.structure.near
 import com.datastax.montecristo.utils.MarkdownTable
 
 class UnusedTables : DocumentSection {
@@ -45,6 +46,9 @@ class UnusedTables : DocumentSection {
             md.addRow().addField(table.name).addField(table.totalDiskSpaceUsed.count.sum().humanBytes())
         }
 
+        if (cluster.schema.getUserTables().count() > 300) {
+            recs.near(RecommendationType.INFRASTRUCTURE, "There are too many tables in this cluster.  Make preparations for separate clusters, focusing on separating operational converns and business domains.")
+        }
 
         if(unused.count() > 0) {
             val space = unused.sumOf { it.totalDiskSpaceUsed.count.sum() }.humanBytes()

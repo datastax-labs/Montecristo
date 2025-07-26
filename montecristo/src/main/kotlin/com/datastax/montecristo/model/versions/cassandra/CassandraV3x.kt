@@ -25,7 +25,7 @@ open class CassandraV3x (versionIdentifier: String) : Cassandra(versionIdentifie
     override fun isSafeToUseUDT(): Boolean {
         return false
     }
-    override fun isCommunityMaintained(): Boolean {
+    override fun isSupported(): Boolean {
         return false
     }
     override fun latestRelease(): DatabaseVersion {
@@ -35,12 +35,11 @@ open class CassandraV3x (versionIdentifier: String) : Cassandra(versionIdentifie
         return versionString.split(".")[1].toInt() >= 4
     }
 
-    override fun recommendedOSSettingsLink(): String {
-        return  "https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/install/installRecommendSettings.html"
-    }
-
     override fun parseLargePartitionSizeMessage(messages: List<String>): List<Pair<String, Long>> {
         return super.parseOldLargePartitionSizeMessage(messages, "partition ([\\w]+[\\/]+[\\w.]+:[\\w:\\-_]+) [\\(]+([0-9]+) bytes[\\)]+")
     }
 
+    override fun hasUnitYamlValues(): Boolean {
+        return false
+    }
 }

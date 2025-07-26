@@ -57,4 +57,8 @@ class CassandraV20x (versionIdentifier: String) : Cassandra(versionIdentifier)  
     override fun recommendedOSSettingsLink(): String {
         return "https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/install/installRecommendSettings.html"
     }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return false
+    }
 }

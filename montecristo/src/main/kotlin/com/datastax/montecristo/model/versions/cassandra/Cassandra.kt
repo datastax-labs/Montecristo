@@ -49,11 +49,11 @@ abstract class Cassandra(val versionString: String) : DatabaseVersion {
         return false
     }
 
-    override fun showCassandra4Upgrade(): Boolean {
-        return true
+    override fun isLatestMajorRelease(): Boolean {
+        return false
     }
 
-    override fun isCommunityMaintained(): Boolean {
+    override fun isSupported(): Boolean {
         return false
     }
 
@@ -89,6 +89,10 @@ abstract class Cassandra(val versionString: String) : DatabaseVersion {
         return searcher.search("+large +partition", LogLevel.WARN, queryLimit)
     }
 
+    override fun recommendedOSSettingsLink(): String {
+        return "https://cassandra.apache.org/doc/latest/cassandra/getting-started/production.html"
+    }
+
     override fun showChunkLengthKBNote(): Boolean {
         return false
     }
@@ -104,6 +108,15 @@ abstract class Cassandra(val versionString: String) : DatabaseVersion {
     override fun supportsIncrementalRepair(): Boolean {
         return false
     }
+
+    override fun supportsUcs(): Boolean {
+        return false
+    }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return true
+    }
+
     override fun toString(): String {
         return versionString
     }

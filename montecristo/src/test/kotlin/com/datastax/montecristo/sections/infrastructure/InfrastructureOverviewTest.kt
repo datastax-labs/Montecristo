@@ -602,6 +602,6 @@ internal class InfrastructureOverviewTest() {
         val infra = InfrastructureOverview()
         infra.checkIfTooMuchDataPerNode(cluster, recs)
         assertThat(recs.size).isEqualTo(1)
-        assertThat(recs[0].longForm).contains("2 nodes are storing more than 2TB of data each. We recommend that the number of nodes within the cluster is expanded to reduce the amount stored per node.")
+        assertThat(recs[0].longForm).contains("2 nodes are storing more than 2TB of data each. We recommend adding nodes to the cluster to reduce node densities, or upgrading to HCD for higher node densities.")
     }
 }

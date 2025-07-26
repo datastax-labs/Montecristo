@@ -21,6 +21,7 @@ import com.datastax.montecristo.logs.Searcher
 import com.datastax.montecristo.model.Cluster
 import com.datastax.montecristo.model.ConfigSource
 import com.datastax.montecristo.model.profiles.ExecutionProfile
+import com.datastax.montecristo.model.versions.cassandra.CassandraV41x
 import com.datastax.montecristo.sections.DocumentSection
 import com.datastax.montecristo.sections.structure.Recommendation
 import com.datastax.montecristo.sections.structure.RecommendationType
@@ -45,14 +46,28 @@ class CompactionSettings : DocumentSection {
         val args = super.createDocArgs(cluster)
         val compactionSection = StringBuilder()
 
-        val compactionThroughput = cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16")
+        val compactionThroughput = if (cluster.databaseVersion.hasUnitYamlValues()) {
+            // xxx – 4.1+ clusters might still be using the legacy `compaction_throughput_mb_per_sec`
+            // todo – the handling of the new yaml setting names needs some code redesign/refactoring
+            // the required todo logic here generally repeats for all new yaml setting names, that are annotated with @Replace, like,
+            //     if compaction_throughput, then use it, but parse the units suffix (or assume mb/s and strip it)
+            //     else compaction_throughput_mb_per_sec then use it,
+            //     else use compaction_throughput's default
+            // this would need a call stack like:
+            //  Cluster.getCompactionThroughputYaml() -> Node.getCompactionThroughputYaml() -> DatabaseVersion.getCompactionThroughputYaml()
+            // ref: https://github.com/datastax-labs/Montecristo/pull/14#discussion_r2269403224
+            cluster.getSetting("compaction_throughput", ConfigSource.CASS, "64MiB/s")
+        } else {
+            cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16")
+        }
         val concurrentCompactors = cluster.getSetting("concurrent_compactors", ConfigSource.CASS, "2")
 
         compactionSection.append(Utils.formatCassandraYamlSetting(concurrentCompactors))
         compactionSection.append(Utils.formatCassandraYamlSetting(compactionThroughput))
 
         val concurrentCompactorsValue = concurrentCompactors.getSingleValue().toInt()
-        val compactionThroughputValue = compactionThroughput.getSingleValue().toInt()
+        // hack, assume only "MiB/s" is used on "compaction_throughput"
+        val compactionThroughputValue = compactionThroughput.getSingleValue().replace("MiB/s", "").toInt()
 
         if (compactionThroughputValue == 0) {
             recs.near(RecommendationType.CONFIGURATION, unthrottledThroughputRecommencation)

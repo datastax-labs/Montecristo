@@ -67,6 +67,8 @@ class Compaction : DocumentSection {
         val toSTCS = MarkdownTable("Table", "Explanation")
         val toLCS =MarkdownTable("Table", "Explanation")
         val toTWCS = MarkdownTable("Table", "Explanation")
+        val toUCS = MarkdownTable("Table", "Explanation")
+        val hasUCS = cluster.databaseVersion.supportsUcs()
 
         for (table in tables) {
             // are we on the right strategy
@@ -74,31 +76,45 @@ class Compaction : DocumentSection {
             val recommended = getOptimalCompactionStrategy(table)
             if (recommended.shortName != table.compactionStrategy.shortName) {
                 when (recommended.shortName) {
-                    "STCS" -> toSTCS.addRow().addField(table.name).addField("R:W ratio of ${table.getRWRatioHuman()}")
-                    "TWCS" -> toTWCS.addRow().addField(table.name)
+                    "STCS" -> (if (hasUCS) {toUCS} else {toSTCS}).addRow().addField(table.name).addField("R:W ratio of ${table.getRWRatioHuman()}").addField("With UCS use scaling_parameters T4")
+                    "TWCS" -> (if (hasUCS) {toUCS} else {toTWCS}).addRow().addField(table.name)
                             .addField(if (table.compactionStrategy.shortName == "DTCS") {
                                      "Using DTCS"
                                 } else {
                                     "Identified as potential time series"
-                                })
-                    "LCS" -> toLCS.addRow().addField(table.name).addField("R:W ratio of ${table.getRWRatioHuman()} and/or SSTables per read p95 is ${table.sstablesPerReadHistogram.p95.max()}")
+                                }).addField("With UCS use scaling_parameters T8, target_sstable_size 512MiB, base_shard_count 8, and expired_sstable_check_frequency_seconds 300")
+                    "LCS" -> (if (hasUCS) {toUCS} else {toLCS}).addRow().addField(table.name).addField("R:W ratio of ${table.getRWRatioHuman()} and/or SSTables per read p95 is ${table.sstablesPerReadHistogram.p95.max()}").addField("With UCS use scaling_parameters L10")
                 }
+            } else if (cluster.databaseVersion.supportsUcs() && "UCS" != table.compactionStrategy.shortName) {
+                toUCS.addRow().addField(table.name).addField("Using " + table.compactionStrategy.shortName)
+                        .addField(if (table.compactionStrategy.shortName == "LCS") {
+                                    "use scaling_parameters L10"
+                                } else if (table.compactionStrategy.shortName == "TWCS") {
+                                    "use scaling_parameters LT4"
+                                } else {
+                                    "use scaling_parameters T8, target_sstable_size 512MiB, base_shard_count 8, and expired_sstable_check_frequency_seconds 300"
+                                })
             }
+        }
+
+        if (toUCS.rows.isNotEmpty()) {
+            args["toUCS"] = toLCS.toString()
+            recs.near(RecommendationType.DATAMODEL, "We recommend changing the compaction strategy to UCS for ${toUCS.rows.size} ${"table.".plural("tables.", toUCS.rows.size)}")
         }
 
         if (toTWCS.rows.isNotEmpty()) {
             args["toTWCS"] = toTWCS.toString()
-            recs.near(RecommendationType.DATAMODEL, "We recommend evaluating changing the compaction strategy to TWCS for ${toTWCS.rows.size} ${"table.".plural("tables.", toTWCS.rows.size)}")
+            recs.near(RecommendationType.DATAMODEL, "We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to TWCS for ${toTWCS.rows.size} ${"table.".plural("tables.", toTWCS.rows.size)}")
         }
 
         if (toLCS.rows.isNotEmpty()) {
             args["toLCS"] = toLCS.toString()
-            recs.near(RecommendationType.DATAMODEL, "We recommend evaluating changing the compaction strategy to LCS for ${toLCS.rows.size} ${"table.".plural("tables.", toTWCS.rows.size)}")
+            recs.near(RecommendationType.DATAMODEL, "We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to LCS for ${toLCS.rows.size} ${"table.".plural("tables.", toLCS.rows.size)}")
         }
 
         if (toSTCS.rows.isNotEmpty()) {
             args["toSTCS"] = toSTCS.toString()
-            recs.near(RecommendationType.DATAMODEL, "We recommend evaluating changing the compaction strategy to STCS for ${toSTCS.rows.size} ${"table.".plural("tables.", toTWCS.rows.size)}")
+            recs.near(RecommendationType.DATAMODEL, "We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to STCS for ${toSTCS.rows.size} ${"table.".plural("tables.", toSTCS.rows.size)}")
         }
 
         val tableWithHighSSTablePerRead = tables.filter { it.sstablesPerReadHistogram.p95.max() ?: 0.0 >= 5.0 }
@@ -147,6 +163,10 @@ class Compaction : DocumentSection {
         // If the table is using DSE CFS compaction, then do not recommend to change it.
         if (table.compactionStrategy.shortName == "CFS") {
             return CompactionDetail.cfs()
+        }
+
+        if (table.compactionStrategy.shortName == "UCS") {
+            return CompactionDetail.ucs()
         }
 
         // assuming they have a time series.  it's possible they are using DTCS incorrectly, beware!

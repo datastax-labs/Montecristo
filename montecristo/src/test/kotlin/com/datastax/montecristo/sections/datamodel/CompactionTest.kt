@@ -302,7 +302,7 @@ class CompactionTest {
 
         val template = compaction.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(2)
-        assertThat(recs[0].longForm).isEqualTo("We recommend evaluating changing the compaction strategy to LCS for 1 table.")
+        assertThat(recs[0].longForm).isEqualTo("We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to LCS for 1 table.")
         assertThat(recs[1].longForm).isEqualTo("There is 1 table with the p95 SSTable Per Read histogram above 5. This indicates an issue in the data model or compaction strategy choice for the table. We recommend reviewing the table, usage and compaction strategy.")
         assertThat(template).contains("""<span style="color:red;">test.test</span>|<span style="color:red;">STCS</span>|<span style="color:red;">0</span>|<span style="color:red;">0</span>|<span style="color:red;">0</span>|<span style="color:red;">1:1</span>|<span style="color:red;"></span>|<span style="color:red;">10.00</span>""")
         assertThat(template).contains("test.test|R:W ratio of 1:1 and/or SSTables per read p95 is 10.0")
@@ -324,7 +324,7 @@ class CompactionTest {
         val template = compaction.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(2)
         assertThat(template).contains("Using DTCS")
-        assertThat(recs[0].longForm).isEqualTo("We recommend evaluating changing the compaction strategy to TWCS for 1 table.")
+        assertThat(recs[0].longForm).isEqualTo("We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to TWCS for 1 table.")
         assertThat(recs[1].longForm).isEqualTo("There is 1 table with the p95 SSTable Per Read histogram above 5. This indicates an issue in the data model or compaction strategy choice for the table. We recommend reviewing the table, usage and compaction strategy.")
         assertThat(template).contains("""<span style="color:red;">test.test</span>|<span style="color:red;">DTCS</span>|<span style="color:red;">0</span>|<span style="color:red;">0</span>|<span style="color:red;">0</span>|<span style="color:red;">0:1</span>|<span style="color:red;"></span>|<span style="color:red;">10.00</span>""")
 
@@ -349,7 +349,7 @@ class CompactionTest {
 
         val template = compaction.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(2)
-        assertThat(recs[0].longForm).isEqualTo("We recommend evaluating changing the compaction strategy to TWCS for 2 tables.")
+        assertThat(recs[0].longForm).isEqualTo("We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to TWCS for 2 tables.")
         assertThat(recs[1].longForm).isEqualTo("There are 2 tables with the p95 SSTable Per Read histogram above 5. This indicates an issue in the data model or compaction strategy choice for the tables. We recommend reviewing the tables, usage and compaction strategy.")
         assertThat(template).contains("Using DTCS")
         // the order should of reversed because its descending based on operations count
@@ -378,7 +378,7 @@ class CompactionTest {
 
         val template = compaction.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(1)
-        assertThat(recs[0].longForm).isEqualTo("We recommend evaluating changing the compaction strategy to TWCS for 1 table.")
+        assertThat(recs[0].longForm).isEqualTo("We recommend upgrading to >=5.0 or HCD and using UCS on, otherwise evaluating changing the compaction strategy to TWCS for 1 table.")
         assertThat(template).contains("Identified as potential time series")
     }
 

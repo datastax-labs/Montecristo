@@ -37,23 +37,23 @@ class DatabaseVersionTest {
     fun testUnsupportedVersions() {
         var advice = Version().getAdvice(com.datastax.montecristo.model.versions.DatabaseVersion.fromString("2.0.0."), false)!!
         assertThat(advice.size).isEqualTo(2)
-        assertThat(advice[0].longForm).contains(com.datastax.montecristo.model.versions.DatabaseVersion.latest41().toString())
+        assertThat(advice[0].longForm).contains(com.datastax.montecristo.model.versions.DatabaseVersion.latest().toString())
         assertThat(advice[0].longForm).contains(com.datastax.montecristo.model.versions.DatabaseVersion.fromString("2.0.0.").toString())
-        assertThat(advice[0].longForm).contains("unsupported")
+        assertThat(advice[0].longForm).contains("Cassandra unsupported version")
         assertThat(advice[1].longForm).contains(DatabaseVersion.latest20().toString())
 
 
         advice = Version().getAdvice(DatabaseVersion.latest12(), false)!!
         assertThat(advice.size).isEqualTo(1)
-        assertThat(advice[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(advice[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(advice[0].longForm).contains(DatabaseVersion.latest12().toString())
-        assertThat(advice[0].longForm).contains("unsupported")
+        assertThat(advice[0].longForm).contains("Cassandra unsupported version")
 
         advice = Version().getAdvice(DatabaseVersion.fromString("3.6"), false)!!
         assertThat(advice.size).isEqualTo(2)
-        assertThat(advice[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(advice[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(advice[0].longForm).contains(DatabaseVersion.fromString("3.6").toString())
-        assertThat(advice[0].longForm).contains("unsupported")
+        assertThat(advice[0].longForm).contains("Cassandra unsupported version")
         assertThat(advice[1].longForm).contains(DatabaseVersion.latest311().toString())
 
         advice = Version().getAdvice(DatabaseVersion.fromString("5.0.0", true), true)!!
@@ -66,31 +66,31 @@ class DatabaseVersionTest {
     fun testSupportedVersions() {
         var advice = Version().getAdvice(DatabaseVersion.fromString("3.0.0"), false)!!
         assertThat(advice.size).isEqualTo(2)
-        assertThat(advice[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(advice[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(advice[0].longForm).contains(DatabaseVersion.fromString("3.0.0").toString())
-        assertThat(advice[0].longForm).contains(" support")
+        assertThat(advice[0].longForm).contains(" preparations ")
         assertThat(advice[1].longForm).contains(DatabaseVersion.latest30().toString())
 
 
         advice = Version().getAdvice(DatabaseVersion.fromString("3.11.0"), false)!!
         assertThat(advice.size).isEqualTo(2)
-        assertThat(advice[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(advice[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(advice[0].longForm).contains(DatabaseVersion.fromString("3.11.0").toString())
-        assertThat(advice[0].longForm).contains(" support")
+        assertThat(advice[0].longForm).contains(" preparations ")
         assertThat(advice[1].longForm).contains(DatabaseVersion.latest311().toString())
 
         advice = Version().getAdvice(DatabaseVersion.fromString("4.0.0"), false)!!
         assertThat(advice.size).isEqualTo(2)
-        assertThat(advice[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(advice[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(advice[0].longForm).contains(DatabaseVersion.fromString("4.0.0").toString())
-        assertThat(advice[0].longForm).contains(" support")
+        assertThat(advice[0].longForm).contains(" preparations ")
         assertThat(advice[1].longForm).contains(DatabaseVersion.latest40().toString())
 
         advice = Version().getAdvice(DatabaseVersion.fromString("4.1.0"), false)!!
-        assertThat(advice.size).isEqualTo(1)
-        assertThat(advice[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(advice.size).isEqualTo(2)
+        assertThat(advice[0].longForm).contains(DatabaseVersion.latest().toString())
 
-        advice = Version().getAdvice(DatabaseVersion.latest41(), false)!!
+        advice = Version().getAdvice(DatabaseVersion.latest(), false)!!
         assertThat(advice.size).isEqualTo(0)
     }
 
@@ -112,7 +112,7 @@ class DatabaseVersionTest {
         var response = version.getDocument(cluster, searcher, recs, ExecutionProfile.default())
 
         assertThat(recs.size).isEqualTo(2)
-        assertThat(recs[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(recs[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(recs[1].longForm).contains("We recommend that a single version of Cassandra is used within the cluster.")
         assertThat(response).contains("${DatabaseVersion.latest311()}|1")
         assertThat(response).contains("3.6|1")
@@ -135,7 +135,7 @@ class DatabaseVersionTest {
         var response = version.getDocument(cluster, searcher, recs, ExecutionProfile.default())
 
         assertThat(recs.size).isEqualTo(1)
-        assertThat(recs[0].longForm).contains(DatabaseVersion.latest41().toString())
+        assertThat(recs[0].longForm).contains(DatabaseVersion.latest().toString())
         assertThat(response).contains("The version of Cassandra currently in use is ${DatabaseVersion.latest311()}.")
     }
 
@@ -156,13 +156,18 @@ class DatabaseVersionTest {
         version.getDocument(cluster, searcher, recs, ExecutionProfile.default())
 
         assertThat(recs.size).isEqualTo(1)
-        assertThat(recs[0].longForm).contains("6.8")
+        assertThat(recs[0].longForm).contains("6.9")
         assertThat(recs[0].longForm).contains("https://www.datastax.com/legal/supported-software")
     }
 
     @Test
+    fun testOSSLatestReleast() {
+        assertThat(DatabaseVersion.locateLatestOSSRelease("5.0")).startsWith("5.0.")
+    }
+
+    @Test
     fun testDSELatestReleastv6() {
-        val content = this.javaClass.getResourceAsStream("/fileLoaders/parsers/releaseNotes/DSE68ReleaseNoteFragment.txt").reader().readLines()
-        assertThat(DatabaseVersion.locateLatestRelease(content, "# Release notes for 6.8.")).isEqualTo("6.8.43")
+        val content = this.javaClass.getResourceAsStream("/fileLoaders/parsers/releaseNotes/DSE_6.8_Release_Notes.md").reader().readLines()
+        assertThat(DatabaseVersion.locateLatestDseRelease(content, "# Release notes for 6.8.")).isEqualTo("6.8.59")
     }
 }

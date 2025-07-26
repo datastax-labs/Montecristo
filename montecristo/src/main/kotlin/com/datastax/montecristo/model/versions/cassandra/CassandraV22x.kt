@@ -61,4 +61,8 @@ open class CassandraV22x  (versionIdentifier: String) : Cassandra(versionIdentif
         return "https://docs.datastax.com/en/cassandra-oss/2.2/cassandra/install/installRecommendSettings.html"
     }
 
+    override fun hasUnitYamlValues(): Boolean {
+        return false
+    }
+
 }

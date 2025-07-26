@@ -21,6 +21,9 @@ data class CompactionDetail(val name: String, val shortName: String, val options
     // These are short cut creators for the object
     companion object {
 
+        fun ucs(params: Map<String, String> = mutableMapOf()) : CompactionDetail {
+            return CompactionDetail("UnifiedCompactionStrategy", "UCS", params)
+        }
         fun stcs(params: Map<String, String> = mutableMapOf()) : CompactionDetail {
             return CompactionDetail("SizeTieredCompactionStrategy", "STCS", params)
         }

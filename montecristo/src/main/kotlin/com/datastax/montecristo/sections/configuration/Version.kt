@@ -20,6 +20,8 @@ import com.datastax.montecristo.logs.Searcher
 import com.datastax.montecristo.model.Cluster
 import com.datastax.montecristo.model.profiles.ExecutionProfile
 import com.datastax.montecristo.model.versions.DatabaseVersion
+import com.datastax.montecristo.model.versions.cassandra.CassandraV4x
+import com.datastax.montecristo.model.versions.cassandra.CassandraV50x
 import com.datastax.montecristo.sections.DocumentSection
 import com.datastax.montecristo.sections.structure.Recommendation
 import com.datastax.montecristo.sections.structure.RecommendationType
@@ -57,8 +59,11 @@ class Version : DocumentSection {
         } else {
             ""
         }
-        if(!cluster.isDse && cluster.databaseVersion.showCassandra4Upgrade()) {
-            args["showC4Upgrade"] = "true"
+        if (!cluster.isDse && cluster.databaseVersion !is CassandraV50x) {
+            args["showC5Upgrade"] = "true"
+            if (cluster.databaseVersion !is CassandraV4x) {
+                args["showC4Upgrade"] = "true"
+            }
         }
 
         return compileAndExecute("configuration/configuration_cassandra_version.md", args)
@@ -74,13 +79,13 @@ class Version : DocumentSection {
         val args = mutableMapOf<String, Any>("version" to version)
 
         if (isDSE) {
-            if (!version.isCommunityMaintained()) {
-                recommendationList.add(Recommendation.near(RecommendationType.INFRASTRUCTURE, "The version of DSE currently being used is no longer supported. (https://www.datastax.com/legal/supported-software). We strongly recommend that you upgrade to DSE 5.1, or 6.8."))
+            if (!version.isSupported()) {
+                recommendationList.add(Recommendation.near(RecommendationType.INFRASTRUCTURE, "The version of DSE currently being used is no longer supported. (https://www.datastax.com/legal/supported-software). We strongly recommend that you upgrade to HCD (or DSE 6.9)."))
             }
         } else {
-            val cass4rec = cassandra4Recommendation(version, args)
-            if (cass4rec != null) {
-                recommendationList.add(cass4rec)
+            val cassRec = cassandraRecommendation(version, args)
+            if (cassRec != null) {
+                recommendationList.add(cassRec)
             }
         }
         val patchLatestRec = patchToLatestRecommendation(version)
@@ -91,19 +96,19 @@ class Version : DocumentSection {
         return recommendationList
     }
 
-    private fun cassandra4Recommendation(
+    private fun cassandraRecommendation(
         version: DatabaseVersion,
         args: MutableMap<String, Any>
     ) : Recommendation? {
         var recommendedVersion : DatabaseVersion? = null
 
-        val template = if (version.isCommunityMaintained()) {
+        val template = if (version.isSupported()) {
             "supported"
         } else {
             "unsupported"
         }
-        if (version.showCassandra4Upgrade()) {
-            recommendedVersion = DatabaseVersion.latest41()
+        if (!version.isLatestMajorRelease()) {
+            recommendedVersion = DatabaseVersion.latest()
         }
 
         if (recommendedVersion != null && template != null) {

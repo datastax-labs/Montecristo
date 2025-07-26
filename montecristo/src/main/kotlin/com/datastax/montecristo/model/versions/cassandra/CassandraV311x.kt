@@ -19,7 +19,7 @@ package com.datastax.montecristo.model.versions.cassandra
 import com.datastax.montecristo.model.versions.DatabaseVersion
 
 open class CassandraV311x (versionIdentifier: String) : Cassandra(versionIdentifier)  {
-    override fun isCommunityMaintained(): Boolean {
+    override fun isSupported(): Boolean {
         return true
     }
     override fun latestRelease(): DatabaseVersion {
@@ -28,5 +28,9 @@ open class CassandraV311x (versionIdentifier: String) : Cassandra(versionIdentif
 
     override fun recommendedOSSettingsLink(): String {
         return "https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/install/installRecommendSettings.html"
+    }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return false
     }
 }

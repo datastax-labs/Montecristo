@@ -12,5 +12,3 @@ GC Flags :
 ```
 {{GcSettings}}
 ```
-
-

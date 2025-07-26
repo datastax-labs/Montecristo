@@ -31,7 +31,7 @@ interface DatabaseVersion {
 
     fun isSeda() : Boolean
     fun isSafeToUseUDT() : Boolean
-    fun isCommunityMaintained() : Boolean
+    fun isSupported() : Boolean
     fun showChunkLengthKBNote() : Boolean
 
     fun shouldDisableDebugLogging() : Boolean
@@ -53,7 +53,7 @@ interface DatabaseVersion {
 
     fun searchLogForLargePartitionWarnings(searcher : Searcher, queryLimit : Int) : List<LogEntry>
 
-    fun showCassandra4Upgrade() : Boolean
+    fun isLatestMajorRelease() : Boolean
 
     fun supportsReadRepair(): Boolean
     fun supportsVNodes() : Boolean
@@ -61,8 +61,12 @@ interface DatabaseVersion {
     fun supportsOffHeapMemtables(): Boolean
     fun supportsThrift() : Boolean
     fun supportsIncrementalRepair() : Boolean // by supports we mean its ok to use
+    fun supportsUcs() : Boolean
+    fun hasUnitYamlValues() : Boolean
 
     companion object {
+        val downloadPageLines = URL("https://downloads.apache.org/cassandra/").readText().split("\n")
+
         fun fromString(versionIdentifier: String, isDse: Boolean = false ): DatabaseVersion {
             if (isDse)
             {
@@ -73,6 +77,7 @@ interface DatabaseVersion {
                     versionIdentifier.startsWith("6.0") -> DseV6X(versionIdentifier)
                     versionIdentifier.startsWith("6.7") -> DseV67X(versionIdentifier)
                     versionIdentifier.startsWith("6.8") -> DseV68X(versionIdentifier)
+                    versionIdentifier.startsWith("6.9") -> DseV69X(versionIdentifier)
                     else -> DseV68X(versionIdentifier)  // version is unknown, return latest
                 }
             } else
@@ -87,6 +92,7 @@ interface DatabaseVersion {
                     versionIdentifier.startsWith("3.") -> CassandraV3x(versionIdentifier)
                     versionIdentifier.startsWith("4.0") -> CassandraV40x(versionIdentifier)
                     versionIdentifier.startsWith("4.1") -> CassandraV41x(versionIdentifier)
+                    versionIdentifier.startsWith("5.0") -> CassandraV50x(versionIdentifier)
                     else -> CassandraV311x(versionIdentifier)  // version is unknown, return 3.11, which is the most common
                 }
             }
@@ -110,19 +116,27 @@ interface DatabaseVersion {
         }
 
         fun latest30() : DatabaseVersion {
-            return fromString("3.0.29")
+            return fromString(locateLatestOSSRelease("3.0"))
         }
 
         fun latest311() : DatabaseVersion {
-            return fromString("3.11.16")
+            return fromString(locateLatestOSSRelease("3.11"))
         }
 
         fun latest40() : DatabaseVersion {
-            return fromString("4.0.12")
+            return fromString(locateLatestOSSRelease("4.0"))
         }
 
         fun latest41() : DatabaseVersion {
-            return fromString("4.1.4")
+            return fromString(locateLatestOSSRelease("4.1"))
+        }
+
+        fun latest50() : DatabaseVersion {
+            return fromString(locateLatestOSSRelease("5.0"))
+        }
+
+        fun latest() : DatabaseVersion {
+            return latest50()
         }
 
         fun latestDSE4() : DatabaseVersion {
@@ -134,7 +148,7 @@ interface DatabaseVersion {
         fun latestDSE51() : DatabaseVersion {
             // Grab the release notes from github
             val releaseNoteLines = URL("https://raw.githubusercontent.com/datastax/release-notes/master/DSE_5.1_Release_Notes.md").readText().split("\n")
-            val latestRelease = locateLatestRelease(releaseNoteLines, "# Release notes for 5.1.")
+            val latestRelease = locateLatestDseRelease(releaseNoteLines, "# Release notes for 5.1.")
             return fromString(latestRelease, true)
         }
         fun latestDSE60() : DatabaseVersion {
@@ -146,15 +160,28 @@ interface DatabaseVersion {
         fun latestDSE68() : DatabaseVersion {
             // Grab the release notes from github
             val releaseNoteLines = URL("https://raw.githubusercontent.com/datastax/release-notes/master/DSE_6.8_Release_Notes.md").readText().split("\n")
-            val latestRelease = locateLatestRelease(releaseNoteLines, "# Release notes for 6.8.")
+            val latestRelease = locateLatestDseRelease(releaseNoteLines, "# Release notes for 6.8.")
+            return fromString(latestRelease, true)
+        }
+        fun latestDSE69() : DatabaseVersion {
+            // Grab the release notes from github
+            val releaseNoteLines = URL("https://raw.githubusercontent.com/datastax/release-notes/master/DSE_6.9_Release_Notes.md").readText().split("\n")
+            val latestRelease = locateLatestDseRelease(releaseNoteLines, "# Release notes for 6.9.")
             return fromString(latestRelease, true)
         }
 
-        internal fun locateLatestRelease(releaseNotes : List<String>, releaseNotePattern: String): String {
+        internal fun locateLatestDseRelease(releaseNotes : List<String>, releaseNotePattern: String): String {
             // find the lines in the markdown which refer to releases of a version, then take the first (which is the top entry)
             val latestReleaseNoteLine = releaseNotes.filter { l -> l.startsWith(releaseNotePattern) }.first()
             // the release number is at the end of the line
             return latestReleaseNoteLine.substringAfterLast(" ")
+        }
+
+        internal fun locateLatestOSSRelease(releaseNotePattern: String): String {
+            // find the lines in the html which refer to releases of a version
+            val versionLine = downloadPageLines.filter { l -> l.contains("\"" + releaseNotePattern + ".") }.first()
+            // the release number is at the end of the line
+            return versionLine.substringAfter("href=\"").substringBefore("/\"")
         }
     }
 }

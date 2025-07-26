@@ -35,25 +35,17 @@ data class Cluster(val nodes: List<Node>,
                    val metricServer: IMetricServer,
                    val loadErrors: MutableList<LoadError>) {
 
-        // config helpers
+    // config helpers
     fun getSetting(configSetting: String, configSource: ConfigSource, default: String = "", isList: Boolean = false): ConfigurationSetting {
         val values = // If config setting is commented, it'll get the default value
             nodes.associate { node ->
                 // If config setting is commented, it'll get the default value
-                if (configSource == ConfigSource.CASS) {
-                    val foundValue = node.cassandraYaml.get(configSetting, "not_set", isList)
-                    if (foundValue == "not_set") {
-                        Pair(node.hostname, ConfigValue(false, default, ""))
-                    } else {
-                        Pair(node.hostname, ConfigValue(true, default, foundValue))
-                    }
+                val yaml = if (configSource == ConfigSource.CASS) node.cassandraYaml else node.dseYaml
+                val foundValue = yaml.get(configSetting, "not_set", isList)
+                if (foundValue == "not_set") {
+                    Pair(node.hostname, ConfigValue(false, default, ""))
                 } else {
-                    val foundValue = node.dseYaml.get(configSetting, "not_set", isList)
-                    if (foundValue == "not_set") {
-                        Pair(node.hostname, ConfigValue(false, default, ""))
-                    } else {
-                        Pair(node.hostname, ConfigValue(true, default, foundValue))
-                    }
+                    Pair(node.hostname, ConfigValue(true, default, foundValue))
                 }
             }
 

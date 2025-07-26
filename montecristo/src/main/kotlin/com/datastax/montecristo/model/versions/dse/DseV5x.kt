@@ -31,4 +31,8 @@ class DseV5x(versionIdentifier: String) : CassandraV3x(versionIdentifier) {
     override fun recommendedOSSettingsLink(): String {
         return "https://docs.datastax.com/en/dse/5.1/dse-dev/datastax_enterprise/config/configRecommendedSettings.html"
     }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return false
+    }
 }

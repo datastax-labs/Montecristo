@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package com.datastax.montecristo.model.versions.dse
+package com.datastax.montecristo.model.versions.cassandra
 
 import com.datastax.montecristo.model.versions.DatabaseVersion
-import com.datastax.montecristo.model.versions.cassandra.CassandraV311x
 
-class DseV51x(versionIdentifier: String) : CassandraV311x(versionIdentifier) {
-    override fun isSupported(): Boolean {
-        return true
-    }
+class CassandraV50x (versionIdentifier: String) : Cassandra(versionIdentifier)  {
 
     override fun latestRelease(): DatabaseVersion {
-        return DatabaseVersion.latestDSE51()
+        return DatabaseVersion.latest50()
     }
 
-    override fun supportsCredentialValiditySetting(): Boolean {
+    override fun isLatestMajorRelease(): Boolean {
         return true
     }
 
-    override fun recommendedOSSettingsLink(): String {
-        return "https://docs.datastax.com/en/dse/5.1/dse-dev/datastax_enterprise/config/configRecommendedSettings.html"
+    override fun supportsUcs(): Boolean {
+        return false
     }
 }

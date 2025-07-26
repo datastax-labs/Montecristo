@@ -38,6 +38,8 @@ The counter cache is used for both reads and writes.  This should always be enab
 
 {{counterCacheTable}}
 
+<br/>
+
 Tables Using Counters:
 
 {{tablesWithCounters}}

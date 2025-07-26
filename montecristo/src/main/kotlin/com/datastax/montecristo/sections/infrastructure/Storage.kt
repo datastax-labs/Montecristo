@@ -108,7 +108,7 @@ class Storage : DocumentSection {
         }
 
         if (triggerDeviceFormatRecommendation) {
-            recs.near(RecommendationType.INFRASTRUCTURE, "We recommend using the XFS format for the data devices.")
+            recs.near(RecommendationType.INFRASTRUCTURE, "We recommend using the XFS filesystem for the data devices.")
         }
 
         if (triggerSchedulerRecommendation) {

@@ -22,4 +22,8 @@ class CassandraV40x (versionIdentifier: String) : CassandraV4x(versionIdentifier
     override fun latestRelease(): DatabaseVersion {
         return DatabaseVersion.latest40()
     }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return false
+    }
 }

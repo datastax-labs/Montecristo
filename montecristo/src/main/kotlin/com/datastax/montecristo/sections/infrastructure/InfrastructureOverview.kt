@@ -271,7 +271,7 @@ class InfrastructureOverview : DocumentSection {
         if (nodesWithMoreThan2TBData.isNotEmpty()) {
             recs.near(
                     RecommendationType.INFRASTRUCTURE,
-                    "${nodesWithMoreThan2TBData.size} nodes are storing more than 2TB of data each. We recommend that the number of nodes within the cluster is expanded to reduce the amount stored per node."
+                    "${nodesWithMoreThan2TBData.size} nodes are storing more than 2TB of data each. We recommend adding nodes to the cluster to reduce node densities, or upgrading to HCD for higher node densities."
             )
         }
     }

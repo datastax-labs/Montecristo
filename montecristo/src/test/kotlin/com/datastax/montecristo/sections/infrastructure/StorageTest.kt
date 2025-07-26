@@ -103,7 +103,7 @@ internal class StorageTest {
         val template = storage.getDocument(cluster, searcher, recs,ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(4)
         assertThat(recs[0].longForm).isEqualTo("We recommend lowering the read ahead for the data devices to an RA value of 32, which will result in a read ahead of 16 kb.")
-        assertThat(recs[1].longForm).isEqualTo("We recommend using the XFS format for the data devices.")
+        assertThat(recs[1].longForm).isEqualTo("We recommend using the XFS filesystem for the data devices.")
         assertThat(recs[2].longForm).isEqualTo("We recommend using the kyber IO scheduler for the devices holding data.")
         assertThat(recs[3].longForm).isEqualTo("We recommend having at least 50% of the disk space available on the data volume to ensure that compaction has sufficient space to operate. 2 data volumes report less than 50% space free. We recommend further evaluation against the number of tables and their compaction strategies to ensure availability is maintained and capacity planning happens in advance.")
         assertThat(template).contains("node1|dm-0|128|[none] kyber|ext4|false|40.0")

@@ -110,21 +110,23 @@ done
 function check_ds_toolkit_reorg() {
     set -x
     SUBDIR="$(ls ${BASE}/extracted)"
-    NODES_SUBDIR="${BASE}/extracted/${SUBDIR}/nodes"
-    echo "Nodes dir2 content ($NODES_SUBDIR):"
-    ls $NODES_SUBDIR
-    if [ -d "$NODES_SUBDIR" ]; then # move the nodes directory one level up for proper processing
-        mv $NODES_SUBDIR $NODES_DIR
-        rm -Rf "${BASE}/extracted/${SUBDIR}"
-    else
-        echo "nodes dir doesn't exist"
-    fi
+    if [ -n "${SUBDIR}" ]; then
+        NODES_SUBDIR="${BASE}/extracted/${SUBDIR}/nodes"
+        echo "Nodes dir2 content ($NODES_SUBDIR):"
+        ls $NODES_SUBDIR
+        if [ -d "$NODES_SUBDIR" ]; then # move the nodes directory one level up for proper processing
+            mv $NODES_SUBDIR $NODES_DIR
+            rm -Rf "${BASE}/extracted/${SUBDIR}"
+        else
+            echo "nodes dir doesn't exist"
+        fi
 
-    echo "Nodes dir content ($NODES_DIR):"
-    if [ -d "${NODES_DIR}" ]; then
-        # We're dealing with unconverted OpsCenter tarballs
-        ./reorg_opscenter.sh ${BASE}
-        export DSE_ARTIFACTS="y"
+        echo "Nodes dir content ($NODES_DIR):"
+        if [ -d "${NODES_DIR}" ]; then
+            # We're dealing with unconverted OpsCenter tarballs
+            ./reorg_opscenter.sh ${BASE}
+            export DSE_ARTIFACTS="y"
+        fi
     fi
 }
 
@@ -133,11 +135,12 @@ shift $(($OPTIND - 1))
 if [ -n "$list_artifacts" ]; then
     export ARTIFACTS_DIR="."
     export EXTRACTED_DIR="."
+    [[ -f list/.aws/credentials ]] || { echo "Please create list/.aws/credentials"; exit 1; }
     docker-compose build list > /dev/null 2>&1
     if [ -z ${1+x} ]; then
       docker-compose run list
     else
-      docker-compose run list $1
+      docker-compose run list $1 $COLLECTOR_S3_BUCKET
     fi
     docker-compose down > /dev/null 2>&1
     exit 0
@@ -232,6 +235,7 @@ then
             echo "Downloading artifacts from S3. Go grab a coffee, if this is your first time..."
             # pull the artifacts down from S3
             # sync s3 bucket locally into ./artifacts
+            [[ -f pull/env/secrets/aws.env ]] || { echo "Please create pull/env/secrets/aws.env"; exit 1; }
             docker-compose build pull
             docker-compose run pull "${BUCKET_ISSUE_FOLDER}" "${COLLECTOR_S3_BUCKET}"
             docker-compose down

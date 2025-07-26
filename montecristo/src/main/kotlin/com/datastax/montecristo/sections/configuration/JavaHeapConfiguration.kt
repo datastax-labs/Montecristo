@@ -86,6 +86,9 @@ class JavaHeapConfiguration : DocumentSection {
                         " With the available ${ByteCountHelper.humanReadableByteCount(ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kiB"), ByteCountHelperUnits.BINARY)} of RAM," +
                         " we recommend allocating between 12GiB to 16GiB of total heap size.")
             }
+            if (ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kB") >= 40_000_000_000)             {
+                recs.immediate(RecommendationType.CONFIGURATION,"On hardware with >40G memory it is recommended to use G1GC instead of CMS.")
+            }
 
         } else {
             // G1GC recommendations
@@ -99,8 +102,9 @@ class JavaHeapConfiguration : DocumentSection {
             }
             // we should check vs the compressed oops cut off point which is 32765 MB
             if (parsedJvmSettings.heapSize > (32765L * 1024L * 1024L)) {
-                recs.immediate(RecommendationType.CONFIGURATION,"G1 heap is at or above 32GiB. Heap sizes of 32GiB and more no longer benefit from compressed ordinary object pointers (oops) which provide the largest number of addressable objects for the smallest heap size. We recommend decreasing your heap size to 31GiB to maximize its performance.")
+                recs.immediate(RecommendationType.CONFIGURATION,"G1 heap is at or above 32GiB. Heap sizes of 32GiB and more no longer benefit from compressed ordinary object pointers (oops) which provide the largest number of addressable objects for the smallest heap size. Check this and possibly decrease your heap size to 31GiB.")
             }
+            recs.immediate(RecommendationType.CONFIGURATION,"Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
         }
     }
 }

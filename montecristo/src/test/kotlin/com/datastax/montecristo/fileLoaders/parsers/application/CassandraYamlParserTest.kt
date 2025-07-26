@@ -28,7 +28,8 @@ internal class CassandraYamlParserTest {
         val yamlFile = File(this.javaClass.getResource("/fileLoaders/parsers/application/cassandra.yaml").path)
         val cassandraYaml = CassandraYamlParser.parse(yamlFile)
         assertThat(cassandraYaml.vNodes).isEqualTo (256)
-        assertThat(cassandraYaml.compactionThroughput).isEqualTo ("0")
+        assertThat(cassandraYaml.compactionThroughputLegacy).isEqualTo ("0")
+        assertThat(cassandraYaml.compactionThroughput).isEqualTo ("")
         assertThat(cassandraYaml.concurrentCompactors).isEqualTo ("") // not set
         assertThat(cassandraYaml.memtableAllocationType).isEqualTo("offheap_objects")
         assertThat(cassandraYaml.seeds).isEqualTo("172.23.24.12, 172.23.24.61")

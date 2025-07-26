@@ -31,4 +31,8 @@ abstract class Dse6Base(versionIdentifier: String) : Cassandra(versionIdentifier
     override fun defaultPermissionsValidity(): String {
         return "120000"
     }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return false
+    }
 }

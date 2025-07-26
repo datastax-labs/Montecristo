@@ -24,7 +24,4 @@ class CassandraV41x (versionIdentifier: String) : CassandraV4x(versionIdentifier
         return DatabaseVersion.latest41()
     }
 
-    override fun showCassandra4Upgrade(): Boolean {
-        return false
-    }
 }

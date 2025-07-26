@@ -25,7 +25,7 @@ abstract class CassandraV4x (versionIdentifier: String) : Cassandra(versionIdent
     override fun supportsThrift(): Boolean {
         return false
     }
-    override fun isCommunityMaintained(): Boolean {
+    override fun isSupported(): Boolean {
         return true
     }
 

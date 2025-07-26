@@ -25,7 +25,7 @@ class CassandraV30x  (versionIdentifier: String) : Cassandra(versionIdentifier) 
     override fun isSafeToUseUDT(): Boolean {
         return false
     }
-    override fun isCommunityMaintained(): Boolean {
+    override fun isSupported(): Boolean {
         return true
     }
     override fun latestRelease(): DatabaseVersion {
@@ -36,5 +36,9 @@ class CassandraV30x  (versionIdentifier: String) : Cassandra(versionIdentifier) 
     }
     override fun parseLargePartitionSizeMessage(messages: List<String>): List<Pair<String, Long>> {
         return super.parseOldLargePartitionSizeMessage(messages, "partition ([\\w]+[\\/]+[\\w.]+:[\\w:\\-_]+) [\\(]+([0-9]+) bytes[\\)]+")
+    }
+
+    override fun hasUnitYamlValues(): Boolean {
+        return false
     }
 }

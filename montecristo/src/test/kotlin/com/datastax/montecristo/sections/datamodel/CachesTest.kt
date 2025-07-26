@@ -127,6 +127,8 @@ Counter Cache Size|25|Total Counter Cache In MB
 Save Period|86400|Cache flush frequency
 
 
+<br/>
+
 Tables Using Counters:
 
 No tables were using counters.

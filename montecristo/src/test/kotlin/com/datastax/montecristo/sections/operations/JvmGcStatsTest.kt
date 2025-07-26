@@ -35,10 +35,11 @@ class JvmGcStatsTest {
             "* **Par New + CMS**: The default garbage collector algorithms.  They can be optimized for low latency and high throughput but require a deep understanding of them and can be tricky to tune.\n" +
             "* **G1GC**: A collector optimized for high throughput, with minimal configuration, but typically displays higher latencies.\n" +
             "\n" +
+            "<br>\n\n" +
             "The overall distribution of pause times is as follows:\n" +
             "\n" +
             "\n" +
-            "\n" +
+            "\n<br>\n\n" +
             "Pause times by day, broken down by time spent:\n" +
             "\n" +
             "\n" +

@@ -23,6 +23,6 @@ if [ "x" != "x${1}" ]; then
 fi
 # sync s3 bucket to mounted volume
 echo "Available artifact folders ${FOLDER}:"
-aws s3 ls s3://${2}/${FOLDER} | tr -s ' ' | sed 's/\///' | sed "s;PRE ;* ${FOLDER};"
+aws s3 ls s3://${2:-collector-dead-drop}/${FOLDER} | tr -s ' ' | sed 's/\///' | sed "s;PRE ;* ${FOLDER};"
 echo " "
 echo "Run the analysis as follows: ./run.sh <artifact_folder> <encryption_key>"

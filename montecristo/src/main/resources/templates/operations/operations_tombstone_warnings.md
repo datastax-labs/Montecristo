@@ -11,17 +11,26 @@ The tombstone expiry delay introduced by `gc_grace_seconds` is done to allow the
 When reading data from disk, {{software}} reads every value for the requested cell in order to pick the most recent one. This involves reading potentially an excessive number of tombstones which might cause memory pressure or even exhaust all memory available. To indicate a danger of this happening, {{software}} issues warning log lines.
 
 {{#byDay}}
-Per day tombstone warnings
+
+<br>
+
+### Per day tombstone warnings
 
 {{byDay}}
 {{/byDay}}
 {{#byNode}}
-Per node tombstone warnings
+
+<br>
+
+### Per node tombstone warnings
 
 {{byNode}}
 {{/byNode}}
 {{#byTable}}
-Per table tombstone warnings
+
+<br>
+
+### Per table tombstone warnings
 
 {{byTable}}
 {{/byTable}}

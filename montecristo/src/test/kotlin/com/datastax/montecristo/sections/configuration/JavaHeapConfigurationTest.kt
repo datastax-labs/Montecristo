@@ -45,9 +45,8 @@ internal class JavaHeapConfigurationTest {
             "-XX:+HeapDumpOnOutOfMemoryError  \n" +
             "-XX:+UseParNewGC  \n" +
             "-Xloggc:/var/log/cassandra/gc.log\n" +
-            "```\n" +
-            "\n" +
-            "\n"
+            "```\n"//\n---\n\n" +
+            //"\nRecommendation: Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93)\n\n---\n"
 
     private val lowNewGenTemplate = "## Java Heap and GC Configuration\n" +
             "\n" +
@@ -62,9 +61,8 @@ internal class JavaHeapConfigurationTest {
             "-XX:+HeapDumpOnOutOfMemoryError  \n" +
             "-XX:+UseParNewGC  \n" +
             "-Xloggc:/var/log/cassandra/gc.log\n" +
-            "```\n" +
-            "\n" +
-            "\n"
+            "```\n"//\n---\n\n" +
+            //"\nRecommendation: Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93)\n\n---\n"
 
     private val lowHeapTemplate = "## Java Heap and GC Configuration\n" +
             "\n" +
@@ -79,9 +77,8 @@ internal class JavaHeapConfigurationTest {
             "-XX:+HeapDumpOnOutOfMemoryError  \n" +
             "-XX:+UseParNewGC  \n" +
             "-Xloggc:/var/log/cassandra/gc.log\n" +
-            "```\n" +
-            "\n" +
-            "\n"
+            "```\n"//\n--\n\n" +
+            //"\nRecommendation: Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93)\n\n---\n"
 
     @Test
     fun getDocumentCleanSettings() {
@@ -200,7 +197,9 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(0)
+        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[0].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 
     @Test
@@ -228,9 +227,11 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs.size).isEqualTo(2)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
         assertThat(recs[0].longForm).isEqualTo("G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently do not have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
+        assertThat(recs[1].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[1].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 
     @Test
@@ -258,9 +259,11 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs.size).isEqualTo(2)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
         assertThat(recs[0].longForm).isEqualTo("G1 ideally requires at least 20GiB of heap space to perform efficiently. We recommend increasing your heap size to value between 20GiB and 31GiB to maximize its performance.")
+        assertThat(recs[1].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[1].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 
     @Test
@@ -288,9 +291,11 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs.size).isEqualTo(2)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
-        assertThat(recs[0].longForm).isEqualTo("G1 heap is at or above 32GiB. Heap sizes of 32GiB and more no longer benefit from compressed ordinary object pointers (oops) which provide the largest number of addressable objects for the smallest heap size. We recommend decreasing your heap size to 31GiB to maximize its performance.")
+        assertThat(recs[0].longForm).isEqualTo("G1 heap is at or above 32GiB. Heap sizes of 32GiB and more no longer benefit from compressed ordinary object pointers (oops) which provide the largest number of addressable objects for the smallest heap size. Check this and possibly decrease your heap size to 31GiB.")
+        assertThat(recs[1].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[1].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 
     @Test
@@ -331,9 +336,11 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs.size).isEqualTo(2)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
         assertThat(recs[0].longForm).isEqualTo("We recommend aligning the JVM settings across the nodes - there are 2 different JVM configurations.")
+        assertThat(recs[1].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[1].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
      }
 
     @Test
@@ -365,7 +372,9 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(0)
+        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[0].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 
     @Test
@@ -406,6 +415,8 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(0)
+        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
+        assertThat(recs[0].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 }
