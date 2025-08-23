@@ -47,16 +47,14 @@ class LogEntry(
                     val level = groups?.get(logRegex.groupMappings.getOrDefault(LogEntryGroupings.LEVEL, 1))?.value ?: ""
                     val isoFormatDate = groups?.get(logRegex.groupMappings.getOrDefault(LogEntryGroupings.DATE, 2))?.value?.trim()
 
-                    if (level == "" || isoFormatDate == "") {
+                    if (level == "" || isoFormatDate.isNullOrBlank()) {
                         return LogEntry("", "", "")
                     }
-                    val parsedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(isoFormatDate)
+                    // logback's %date may use either a space or a 'T' between the date and time
+                    val parsedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(isoFormatDate.replace('T', ' '))
                     val timestamp = SimpleDateFormat(internalFormat).format(parsedDate)
 
                     val message = groups?.get(logRegex.groupMappings.getOrDefault(LogEntryGroupings.MESSAGE, 3))?.value?.trim()
-                    if (isoFormatDate.isNullOrBlank()) {
-                        logger.info("BLANK TIMESTAMP : $line")
-                    }
                     return LogEntry(level, message, timestamp)
                 } else {
                     val groups = alt_regex1.find(line)?.groups
