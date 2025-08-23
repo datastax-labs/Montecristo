@@ -50,7 +50,7 @@ class LogEntry(
                     if (level == "" || isoFormatDate == "") {
                         return LogEntry("", "", "")
                     }
-                    val parsedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(isoFormatDate)
+                    val parsedDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(isoFormatDate!!.replace('T',' '))
                     val timestamp = SimpleDateFormat(internalFormat).format(parsedDate)
 
                     val message = groups?.get(logRegex.groupMappings.getOrDefault(LogEntryGroupings.MESSAGE, 3))?.value?.trim()
