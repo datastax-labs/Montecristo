@@ -1,57 +1,48 @@
 # Discovery Analysis Tools
 
-We have developed Montecristo, an analysis tool to help with discovery of a Cassandra / DSE Cluster.
+Montecristo is an analysis tool to help with discovery of a Cassandra / HCD / DSE Cluster.
+
+It generates comprehensive Health Discovery reports from diagnostics collected from the [Diagnostic Collector for Apache Cassandra, DSE, HCD](https://github.com/datastax/diagnostic-collection/).
 
 Installation and setup found at [bottom of document](#InstallAndSetup).
 
-## Grab & Analysis
+## Analysis
 
-When running discovery for the first time - if you are using an AWS dead-drop bucket, navigate to `tlp-tools/discovery/` and run the following commands:
+**Arguments**:
+**`ISSUE_FOLDER`**
 
-    # copy and fill out your aws credentials
-    cp pull/env/secrets/aws.env.template pull/env/secrets/aws.env
-    vi pull/env/secrets/aws.env
+The folder name that will be created under `~/ds-discovery/` to store artifacts and analysis results. This is typically a ticket ID or identifier for the cluster being analyzed.
 
+**`ENCRYPTION_KEY_PATH`** (optional)
 
-If using an AWS dead drop bucket, please edit the aws-env.sh file and put the bucket name into the file:
-
-    export COLLECTOR_S3_BUCKET=your-collector-dead-drop
+Path to the encryption key file. Some diagnostic-collection bundles come with an encryption key in the format `<PROJECT_ID>_secret.key`. When used during collection, the output files will have a .enc extension on them. The argument only needs to be provided when encrypted artifacts are present.
 
 ---
 
-**Arguments**:  
-**`BUCKET_ISSUE_FOLDER`**
+### Running Analysis with Local Artifacts
 
-Is the folder in the configured _collector-dead-drop_ bucket containing the archives uploaded by the collector. This will be either the ticket id assigned when building the collector combined with the timestamp the collector was run.
+To analyze artifacts from a local directory:
 
-**`ENCRYPTION_KEY`**
+    # Copy artifacts from local directory
+    ./run.sh -c /path/to/local/artifacts $ISSUE_FOLDER $ENCRYPTION_KEY_PATH
 
-During the collector build process, an encryption key is generated in the format `<PROJECT_ID>_secret.key`. When used during collection, the output files will have a .enc extension on them. The argument only needs to be provided when that extension is shown.
+Or if artifacts are already in `~/ds-discovery/$ISSUE_FOLDER/artifacts`:
 
----
+    # Run analysis on existing artifacts
+    ./run.sh $ISSUE_FOLDER $ENCRYPTION_KEY_PATH
 
-Existing bucket issue folders can be listed using the following command:
+The above will:
 
-    ./run.sh -l
-
-Then, run the following command to trigger the analysis:
-
-    # run the analysis
-    ./run.sh $BUCKET_ISSUE_FOLDER $ENCRYPTION_KEY
-
-The above will:  
-
-- Download the encrypted artifacts to `~/ds-discovery/<ISSUE-ID>/artifacts`
-- Decrypt them (`bad decrypt` errors can be ignored as there's a fallback method that triggers automatically)
-- Decompress the artifacts to `~/ds-discovery/<ISSUE-ID>/extracted`
-- Generate the metrics sqlite db from the extracted `metrics.jmx` files under `~/ds-discovery/<ISSUE-ID>/metrics.db`. This needs to be generated only once, but can be overwritten if need be on subsequent runs
+- Decrypt the artifacts if encrypted (`bad decrypt` errors can be ignored as there's a fallback method that triggers automatically)
+- Decompress the artifacts to `~/ds-discovery/<ISSUE_FOLDER>/extracted`
+- Generate the metrics sqlite db from the extracted `metrics.jmx` files under `~/ds-discovery/<ISSUE_FOLDER>/metrics.db`. This needs to be generated only once, but can be overwritten if need be on subsequent runs
 - Recompile Montecristo
 - Perform the Montecristo analysis and generate a markdown report
 - Start a Hugo server with the report
 
-If there is a need to re-run the analysis, after a modification was made in Montecristo for example, you can avoid re-downloading the artifacts from the S3 bucket using the `-e` flag:  
+If there is a need to re-run the analysis after a modification was made in Montecristo, use the `-e` flag to skip download and extraction:
 
-    ./run.sh -e $BUCKET_ISSUE_FOLDER $ENCRYPTION_KEY
+    ./run.sh -e $ISSUE_FOLDER $ENCRYPTION_KEY_PATH
 
 
 Once the analysis is done, you should see the list of generated recommendations in the console output and the following lines:  
