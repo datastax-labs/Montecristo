@@ -38,11 +38,26 @@ object SSTableStatisticsConverter {
         System.setProperty("cassandra.config", yamlPath.toString())
 
         // set up the metadataviewer class which will be called repeatedly
-        val gc = 0
-        val ts = TimeUnit.valueOf("MICROSECONDS")
         val outputStream = ByteArrayOutputStream()
         val capture = PrintStream(outputStream)
-        val metawriter = SSTableMetadataViewer(false, true, gc, ts, capture)
+        val metawriter = SSTableMetadataViewer()
+        
+        // Use reflection to set package-private fields in Cassandra 4.0.19
+        val colorField = SSTableMetadataViewer::class.java.getDeclaredField("color")
+        colorField.isAccessible = true
+        colorField.setBoolean(metawriter, false)
+        
+        val unicodeField = SSTableMetadataViewer::class.java.getDeclaredField("unicode")
+        unicodeField.isAccessible = true
+        unicodeField.setBoolean(metawriter, true)
+        
+        val gcField = SSTableMetadataViewer::class.java.getDeclaredField("gc")
+        gcField.isAccessible = true
+        gcField.setInt(metawriter, 0)
+        
+        val outField = SSTableMetadataViewer::class.java.getDeclaredField("out")
+        outField.isAccessible = true
+        outField.set(metawriter, capture)
 
         files.map { file ->
             try {

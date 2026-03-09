@@ -1,4 +1,4 @@
-# DSE Config Version: 6.8.62
+# DSE Config Version: 6.9.18
 
 # cassandra.yaml is the main storage configuration file for DataStax Enterprise (DSE).
 
@@ -553,9 +553,10 @@ trickle_fsync_interval_in_kb: 10240
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
 storage_port: 7000
 
-# SSL port, for encrypted communication.  Unused unless enabled in
-# encryption_options
-# For security reasons, you should not expose this port to the internet.  Firewall it if needed.
+# SSL port, for legacy encrypted communication. This property is unused unless enabled in
+# server_encryption_options (see below). As of DSE 6.9.7, this property is deprecated
+# as a single port can be used for either/both secure and insecure connections.
+# For security reasons, you should not expose this port to the internet. Firewall it if needed.
 ssl_storage_port: 7001
 
 # Address or interface to bind to and tell other nodes to connect to.
@@ -1024,8 +1025,27 @@ dynamic_snitch_badness_threshold: 0.1
 # For PKCS11 the "java.security" file must be updated to register the PKCS11 JNI binding
 # and the relevant native binaries installed.
 # For more information see: https://docs.oracle.com/javase/8/docs/technotes/guides/security/p11guide.html
+#
+# **NOTE** this default configuration is an insecure configuration. If you need to
+# enable server-to-server encryption generate server keystores (and truststores for mutual
+# authentication) per:
+# http://download.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore
+# Then perform the following configuration changes:
+#
+# Step 1: Set internode_encryption=<dc|rack|all> and explicitly set optional=true. Restart all nodes
+#
+# Step 2: Set optional=false (or remove it) and if you generated truststores and want to use mutual
+# auth set require_client_auth=true. Restart all nodes
 server_encryption_options:
     internode_encryption: none
+    # When set to true, encrypted and unencrypted connections are allowed on the storage_port
+    # This should _only be true_ while in unencrypted or transitional operation
+    # When set to true the keystore and truststore has to be configured as well
+    # optional defaults to false
+    # optional: false
+    # If enabled, will open up an encrypted listening socket on ssl_storage_port. Should only be used
+    # during upgrade to 6.9.7 or later; otherwise, set to false.
+    enable_legacy_ssl_storage_port: false
     keystore: resources/dse/conf/.keystore
     keystore_password: cassandra
     truststore: resources/dse/conf/.truststore
