@@ -144,14 +144,19 @@ These instructions tested on new/clean Windows install using WSL2 running Ubuntu
 5. jq should be installed
    * On Ubuntu: `sudo apt install jq`
    * On OSX: `brew install jq`
-6. To enable the conversion and reading of Datastax Enterprise sstablemetadata files, the licensed Datastax Enterprise 6.8 should be downloaded from [Datastax Enterprise](https://www.datastax.com/products/datastax-enterprise/download) and the following jars extracted from the download and placed into the dse-stats-converter/libs folder:
-   * agrona-0.9.26.jar
-   * dse-commons-6.8.17.jar
-   * dse-db-all-6.8.17.jar
-   * durian-3.4.0.jar
-   * jctools-core-2.1.2.jar
-   * netty-all-4.1.25.7.dse.jar
-   * rxjava-2.2.7.jar
+6. To enable the conversion and reading of Datastax Enterprise sstablemetadata files, download IBM DataStax Enterprise from [IBM Fix Central](https://www.ibm.com/support/fixcentral/options?selectionBean.selectedTab=find&selection=ibm%2fInformation+Management%3bibm%2fInformation+Management%2fIBM+DataStax+Enterprise) and use the `-d` flag with `build.sh` to automatically extract the required jars from the DSE tarball:
+   ```bash
+   ./build.sh -d /path/to/dse-6.8.x-bin.tar.gz
+   ```
+   This will extract the following jars from the DSE tarball into `dse-stats-converter/libs/`:
+   * agrona-*.jar
+   * dse-commons-*.jar
+   * dse-db-all-*.jar
+   * durian-*.jar
+   * jctools-core-*.jar
+   * netty-all-*.jar
+   * rxjava-2.*.jar
+   
    If the dse-db-all file exists in that folder, it will automatically enable the option within the run.sh script to offer the option of converting the files.
 7. When running for the first time, execute the `mkhugozip.sh` script in `montecristo/src/main/resources/`
 

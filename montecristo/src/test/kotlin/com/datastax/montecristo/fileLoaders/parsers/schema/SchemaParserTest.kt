@@ -49,7 +49,7 @@ internal class SchemaParserTest() {
         assertEquals(1, schema.keyspaces.size)
         assertNotNull(schema.getKeyspace("testks"))
         assertTrue(schema.getKeyspace("testks")?.name == "testks")
-        assertTrue(schema.tables?.size > 0)
+        assertTrue((schema.tables?.size ?: 0) > 0)
         assertNotNull(schema.getTable("testks.ip_subnet"))
     }
 

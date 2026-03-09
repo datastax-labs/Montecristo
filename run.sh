@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 function usage() {
     cat << EOF
@@ -420,6 +421,9 @@ then
   exit 1
 fi
 
+# Build the tools if necessary
+$SCRIPT_DIR/build.sh || exit 1
+
 # Check if the DSE files exist to understand the DSE sstablemetadata files
 if ls ./dse-stats-converter/libs/dse*.jar 1> /dev/null 2>&1; then
   echo
@@ -469,16 +473,6 @@ zero_byte_size_file_path=${REPORTS_DIR}/zero_byte_size_files.txt
 find "${EXTRACTED_DIR}" -size 0 >"${zero_byte_size_file_path}"
 
 echo "Montecristo time!"
-
-
-pushd montecristo || exit 1
-if [ -f "./build.gradle" ]; then
-    pushd src/main/resources || exit 1
-    ./mkhugozip.sh
-    popd || exit 1
-    ./gradlew build install -x test || exit 1
-fi
-
 
 # If the metrics db file doesn't exist then we need to generate it, no questions asked...
 if [ ! -f "${METRICS_DIR}/metrics.db" ]; then
