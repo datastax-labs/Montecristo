@@ -132,9 +132,9 @@ Press Ctrl+C to stop
 
 These instructions tested on new/clean Windows install using WSL2 running Ubuntu 20.04. It has *not* been validated in Windows directly and is unlikely to work...
 
-1. [OpenJDK 8 with HotSpot ](https://adoptium.net/releases.html?variant=openjdk8&jvmVariant=hotspot) must be the default `java`
-    * On Ubuntu: `sudo apt install openjdk-8-jdk`
-    * On OSX: `brew tap homebrew/cask-versions` then `brew install --cask temurin8`
+1. [OpenJDK 11 with HotSpot ](https://adoptium.net/releases.html?variant=openjdk11&jvmVariant=hotspot) must be the default `java`
+    * On Ubuntu: `sudo apt install openjdk-11-jdk`
+    * On OSX: `brew install --cask temurin@11`
 2. [Docker Desktop](https://www.docker.com/products/docker-desktop) must be installed
 3. Current user must be a member of the `docker` group
     * On Ubuntu: `sudo usermod -aG docker $(whoami)`

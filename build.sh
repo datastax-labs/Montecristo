@@ -20,61 +20,63 @@ dse_tarball=""
 clean_build="false"
 run_tests="false"
 
-# Function to find Java 8 installation
-function find_java8() {
-    # Check if JAVA_HOME is already set to Java 8
+# Function to find Java 11 installation
+function find_java11() {
+    # Check if JAVA_HOME is already set to Java 11
     if [ -n "${JAVA_HOME}" ]; then
         java_version=$("${JAVA_HOME}/bin/java" -version 2>&1 | head -n 1)
-        if echo "${java_version}" | grep -q "1.8"; then
+        if echo "${java_version}" | grep -q "\"11\."; then
             return 0
         fi
     fi
 
-    # Try to find Java 8 using java_home (macOS)
-    if command -v /usr/libexec/java_home &> /dev/null; then
-        java8_home=$(/usr/libexec/java_home -v 1.8 2>/dev/null)
-        if [ -n "${java8_home}" ] && [ -d "${java8_home}" ]; then
-            export JAVA_HOME="${java8_home}"
-            export PATH="${JAVA_HOME}/bin:${PATH}"
-            echo "Found Java 8 at: ${JAVA_HOME}"
-            return 0
-        fi
-    fi
-
-    # Try common Java 8 installation locations
-    java8_locations=(
-        "/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home"
-        "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home"
-        "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home"
-        "/usr/lib/jvm/java-8-openjdk"
-        "/usr/lib/jvm/java-1.8.0-openjdk"
+    # Try common Java 11 installation locations first (prioritize Temurin and OpenJDK-based over Semeru)
+    java11_locations=(
+        "/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home"
+        "/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home"
+        "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home"
+        "/Library/Java/JavaVirtualMachines/corretto-11.jdk/Contents/Home"
+        "/usr/lib/jvm/java-11-openjdk"
+        "/usr/lib/jvm/java-11-openjdk-amd64"
+        "/Library/Java/JavaVirtualMachines/ibm-semeru-open-11.jdk/Contents/Home"
     )
 
-    for location in "${java8_locations[@]}"; do
+    for location in "${java11_locations[@]}"; do
         if [ -d "${location}" ]; then
             export JAVA_HOME="${location}"
             export PATH="${JAVA_HOME}/bin:${PATH}"
-            echo "Found Java 8 at: ${JAVA_HOME}"
+            echo "Found Java 11 at: ${JAVA_HOME}"
             return 0
         fi
     done
 
+    # Fall back to java_home if specific locations not found (macOS)
+    if command -v /usr/libexec/java_home &> /dev/null; then
+        java11_home=$(/usr/libexec/java_home -v 11 2>/dev/null)
+        if [ -n "${java11_home}" ] && [ -d "${java11_home}" ]; then
+            export JAVA_HOME="${java11_home}"
+            export PATH="${JAVA_HOME}/bin:${PATH}"
+            echo "Found Java 11 at: ${JAVA_HOME}"
+            return 0
+        fi
+    fi
+
     return 1
 }
 
-# Ensure Java 8 is available
-echo "Checking for Java 8..."
-if ! find_java8; then
-    echo "Error: Java 8 (JDK 1.8) is required but not found."
+# Ensure Java 11 is available
+echo "Checking for Java 11..."
+if ! find_java11; then
+    echo "Error: Java 11 (JDK 11) is required but not found."
     echo ""
-    echo "Please install Java 8. For Apple Silicon Macs, we recommend Azul Zulu 8:"
-    echo "  brew install --cask zulu@8"
+    echo "Please install Java 11. For Apple Silicon Macs, we recommend Azul Zulu 11:"
+    echo "  brew install --cask zulu@11"
     echo ""
     echo "After installation, you may need to run the pkg installer to register it:"
-    echo "  open /usr/local/Caskroom/zulu@8/*/zulu-8.jdk/Double-Click\\ to\\ Install\\ Zulu\\ 8.pkg"
+    echo "  open /usr/local/Caskroom/zulu@11/*/zulu-11.jdk/Double-Click\\ to\\ Install\\ Zulu\\ 11.pkg"
     echo ""
     echo "Or set JAVA_HOME manually before running this script:"
-    echo "  export JAVA_HOME=/path/to/java8"
+    echo "  export JAVA_HOME=/path/to/java11"
     echo "  ./build.sh"
     exit 1
 fi

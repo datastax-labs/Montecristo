@@ -13,3 +13,6 @@ montecristo/src/main/resources/hugo.zip
 montecristo/DEV_HOME_IS_UNDEFINED/
 
 montecristo-report.txt
+
+# IDE
+.vscode/
