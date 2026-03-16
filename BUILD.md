@@ -6,45 +6,40 @@
 
 | Requirement | Version |
 |---|---|
-| Java (JDK) | 8 (required) |
+| Java (JDK) | 11 (required) |
 | Gradle | Provided via the included Gradle wrapper (`./gradlew`) |
 
-### Installing Java 8 on Apple Silicon (M1/M2/M3)
+### Installing Java 11 on Apple Silicon (M1/M2/M3)
 
-This project requires Java 8 (JDK 1.8). On Apple Silicon Macs, you need a native arm64 build of Java 8 for optimal performance.
+This project requires Java 11 (JDK 11). On Apple Silicon Macs, you need a native arm64 build of Java 11 for optimal performance.
 
-**Recommended: Azul Zulu 8 (arm64 native)**
+**Recommended: Adoptium Temurin 11 (arm64 native)**
 
 Install via Homebrew:
 ```bash
-brew install --cask zulu@8
-```
-
-After installation, you may need to run the pkg installer to register it with the system:
-```bash
-open /usr/local/Caskroom/zulu@8/*/zulu-8.jdk/Double-Click\ to\ Install\ Zulu\ 8.pkg
+brew install --cask temurin@11
 ```
 
 **Verify Installation:**
 ```bash
-/usr/libexec/java_home -v 1.8
-# Should output: /Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
+/usr/libexec/java_home -v 11
+# Should output: /Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home
 
 java -version
-# Should show: openjdk version "1.8.0_..."
+# Should show: openjdk version "11.0.x"
 ```
 
 **Alternative Options:**
-- **Adoptium Temurin 8**: `brew install --cask temurin@8` (arm64 native)
-- **Amazon Corretto 8**: `brew install --cask corretto8` (arm64 native)
+- **Azul Zulu 11**: `brew install --cask zulu@11` (arm64 native)
+- **Amazon Corretto 11**: `brew install --cask corretto11` (arm64 native)
 
 **Note:** Avoid x86_64 (Intel) Java builds like IBM Semeru on Apple Silicon, as they run under Rosetta 2 emulation and may cause compatibility issues.
 
 ### Manual JAVA_HOME Setup
 
-If the build script doesn't automatically detect Java 8, set `JAVA_HOME` manually:
+If the build script doesn't automatically detect Java 11, set `JAVA_HOME` manually:
 ```bash
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home
 export PATH=$JAVA_HOME/bin:$PATH
 ./build.sh
 ```

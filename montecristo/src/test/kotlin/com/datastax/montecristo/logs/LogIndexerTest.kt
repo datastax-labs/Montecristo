@@ -18,7 +18,7 @@ package com.datastax.montecristo.logs
 
 import com.datastax.montecristo.model.logs.LogLevel
 import org.apache.lucene.store.Directory
-import org.apache.lucene.store.RAMDirectory
+import org.apache.lucene.store.ByteBuffersDirectory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -41,7 +41,7 @@ class LogIndexerTest {
     @Before
     fun setup() {
         reader = this.javaClass.getResource("/system.example.log").openStream()
-        ram = RAMDirectory()
+        ram = ByteBuffersDirectory()
     }
 
     @Test
@@ -87,7 +87,7 @@ WARN  [STREAM-IN-/172.18.107.181:58867] 2018-02-14 09:22:24,375 StreamResultFutu
     @Test
     fun testWriteToIndex() {
         val logEntries = LogIndexer.getLogEntries(reader, LogRegex.defaultRegex())
-        val indexWriter = LogIndexer.getWriter(RAMDirectory())
+        val indexWriter = LogIndexer.getWriter(ByteBuffersDirectory())
         val result = LogIndexer.writeToIndex(indexWriter, logEntries, "test_host")
         // validate that the min / max also got picked up
         val internalFormat = "yyyyMMddHHmmss"

@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '8'
+        java-version: '11'
     - name: Get tag name
       id: get_tag_name
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
