@@ -21,7 +21,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 
-open class YamlConfig(private val basedata: JsonNode) {
+open class YamlConfig(
+    private val baseData: JsonNode,
+    private val lineNumbers: Map<String, Int> = emptyMap()
+) {
 
     // generic retriever
     fun get(name: String): String {
@@ -40,14 +43,14 @@ open class YamlConfig(private val basedata: JsonNode) {
     // Change the json node into a map object - primarily used in comparison code
     fun asMap(): Map<String, Any> {
         val mapper = ObjectMapper()
-        return mapper.convertValue(basedata, object : TypeReference<Map<String, Any>>() {})
+        return mapper.convertValue(baseData, object : TypeReference<Map<String, Any>>() {})
     }
 
 
     fun getValueFromPath(path: String, default: String): String {
 
         val pathArray = path.split(".")
-        var tempNode = basedata
+        var tempNode = baseData
         pathArray.forEach {
             tempNode = tempNode.path(it)
             // if we get back an array node, this indicates we hit a yaml list (denoted by the dash)
@@ -66,7 +69,7 @@ open class YamlConfig(private val basedata: JsonNode) {
 
     private fun getListValueFromPath(path: String, default: String): String {
         val pathArray = path.split(".")
-        var tempNode = basedata
+        var tempNode = baseData
         pathArray.forEach {
             tempNode = tempNode.path(it)
         }
@@ -85,6 +88,10 @@ open class YamlConfig(private val basedata: JsonNode) {
     }
 
     fun isEmpty(): Boolean {
-        return basedata.isNull || basedata.isEmpty
+        return baseData.isNull || baseData.isEmpty
+    }
+
+    fun lineFor(path: String): Int? {
+        return lineNumbers[path]
     }
 }

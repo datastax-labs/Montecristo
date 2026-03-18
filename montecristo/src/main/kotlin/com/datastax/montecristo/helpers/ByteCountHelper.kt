@@ -16,6 +16,7 @@
 
 package com.datastax.montecristo.helpers
 
+import com.datastax.montecristo.model.application.ParsedByteCount
 import java.math.BigDecimal
 import java.util.*
 import kotlin.math.ln
@@ -54,25 +55,59 @@ object ByteCountHelper {
         var returnValue: Long = -1
         val parserPattern = Regex("([\\d. ]+)([EPTGMKk])(i?B)")
         if (parserPattern.matches(textSize)) {
+
             val number = parserPattern.find(textSize)!!.groups[1]!!.value.toDouble()
-            val pow = when (parserPattern.find(textSize)!!.groups[2]!!.value) {
-                "E" -> 6
-                "P" -> 5
-                "T" -> 4
-                "G" -> 3
-                "M" -> 2
-                "k", "K" -> 1
-                else -> 0
-            }
-            val base: Long = when (parserPattern.find(textSize)!!.groups[3]!!.value) {
-                "B" -> 1000     // SI (decimal) units
-                "iB" -> 1024    // Binary units
-                else -> 0
-            }
+            val prefix = parserPattern.find(textSize)!!.groups[2]!!.value
+            val binaryMarker = parserPattern.find(textSize)!!.groups[3]!!.value
+            val pow = convertPrefix(prefix)
+            val base: Long = convertBinaryMarker(binaryMarker)
             var bytes = BigDecimal(number)
             bytes = bytes.multiply(BigDecimal.valueOf(base).pow(pow))
             returnValue = bytes.toLong()
         }
         return returnValue
+    }
+
+    fun parseByteCountWithRate(rateString: String): ParsedByteCount {
+        // Parses strings like "MB/s", "MiB/s", "GiB/s", "GB/s" and returns the numeric value and unit without the rate suffix
+        // Pattern: number + unit (with optional prefix and i for binary) + optional /s or /sec
+        val parserPattern = Regex("([\\d. ]+)\\s*([EPTGMKk])(i?B)(?:/s)?(?:/sec)?", RegexOption.IGNORE_CASE)
+        val match = parserPattern.find(rateString) ?: return ParsedByteCount(-1, "Invalid format")
+
+        val number = match.groups[1]!!.value.toDouble()
+        val prefix = match.groups[2]!!.value
+        val binaryMarker = match.groups[3]!!.value
+
+        val pow = convertPrefix(prefix)
+        val base: Long = convertBinaryMarker(binaryMarker)
+        var bytes = BigDecimal(number)
+        bytes = bytes.multiply(BigDecimal.valueOf(base).pow(pow))
+
+        // Reconstruct the unit without the /s suffix
+        val unit = prefix + binaryMarker
+
+        return ParsedByteCount(bytes.toLong(), unit)
+    }
+
+    private fun convertBinaryMarker(binaryMarker: String): Long {
+        val base: Long = when (binaryMarker) {
+            "B" -> 1000     // SI (decimal) units
+            "iB" -> 1024    // Binary units
+            else -> 0
+        }
+        return base
+    }
+
+    private fun convertPrefix(prefix: String): Int {
+        val pow = when (prefix) {
+            "E" -> 6
+            "P" -> 5
+            "T" -> 4
+            "G" -> 3
+            "M" -> 2
+            "k", "K" -> 1
+            else -> 0
+        }
+        return pow
     }
 }
