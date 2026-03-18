@@ -18,7 +18,10 @@ package com.datastax.montecristo.model.application
 
 import com.fasterxml.jackson.databind.JsonNode
 
-data class CassandraYaml(val data : JsonNode)  : YamlConfig(data) {
+data class CassandraYaml(
+    val data : JsonNode,
+    val lines: Map<String, Int> = emptyMap()
+)  : YamlConfig(data, lines) {
 
     // helpers for specific properties
     val clusterName get() = getValueFromPath("cluster_name", "")
@@ -26,8 +29,6 @@ data class CassandraYaml(val data : JsonNode)  : YamlConfig(data) {
     val seeds get() = getValueFromPath("seed_provider.parameters.seeds", "unknown")
     val listenAddress get() = getValueFromPath("listen_address","")
     val broadcastAddress get() = getValueFromPath("broadcast_address","")
-    val compactionThroughputLegacy get() = get("compaction_throughput_mb_per_sec")
-    val compactionThroughput get() = get("compaction_throughput")
     val concurrentCompactors get() = get("concurrent_compactors")
     val partitioner get() = get("partitioner")
     val memtableAllocationType get() = get("memtable_allocation_type")

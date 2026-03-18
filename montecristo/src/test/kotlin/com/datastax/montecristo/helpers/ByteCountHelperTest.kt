@@ -16,6 +16,7 @@
 
 package com.datastax.montecristo.helpers
 
+import com.datastax.montecristo.model.application.ParsedByteCount
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertEquals
@@ -23,7 +24,7 @@ import kotlin.test.assertEquals
 internal class ByteCountHelperTest {
     @Test
     fun testHumanReadableByteCountSiUnits() {
-        Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.ENGLISH)
 
         val units = ByteCountHelperUnits.SI
 
@@ -38,7 +39,7 @@ internal class ByteCountHelperTest {
 
     @Test
     fun testHumanReadableByteCountBinaryUnits() {
-        Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.ENGLISH)
 
         val units = ByteCountHelperUnits.BINARY
 
@@ -71,5 +72,37 @@ internal class ByteCountHelperTest {
         assertEquals(8_000_000_000, ByteCountHelper.parseHumanReadableByteCountToLong("8 GB"))
         assertEquals(32_000, ByteCountHelper.parseHumanReadableByteCountToLong("32 KB"))
         assertEquals(32_000_000, ByteCountHelper.parseHumanReadableByteCountToLong("32000kB"))
+    }
+
+    @Test
+    fun testParseByteCountWithRateSiUnits() {
+        // Test SI units with /s suffix
+        assertEquals(ParsedByteCount(8_000_000_000, "GB"), ByteCountHelper.parseByteCountWithRate("8 GB/s"))
+        assertEquals(ParsedByteCount(8_000_000_000, "GB"), ByteCountHelper.parseByteCountWithRate("8GB/s"))
+        assertEquals(ParsedByteCount(32_000, "KB"), ByteCountHelper.parseByteCountWithRate("32 KB/s"))
+        assertEquals(ParsedByteCount(32_000_000_000, "MB"), ByteCountHelper.parseByteCountWithRate("32000 MB/s"))
+
+        // Test with /sec suffix
+        assertEquals(ParsedByteCount(8_000_000_000, "GB"), ByteCountHelper.parseByteCountWithRate("8 GB/sec"))
+        assertEquals(ParsedByteCount(32_000, "KB"), ByteCountHelper.parseByteCountWithRate("32KB/sec"))
+    }
+
+    @Test
+    fun testParseByteCountWithRateBinaryUnits() {
+        // Test binary units with /s suffix
+        assertEquals(ParsedByteCount(8_589_934_592, "GiB"), ByteCountHelper.parseByteCountWithRate("8 GiB/s"))
+        assertEquals(ParsedByteCount(8_589_934_592, "GiB"), ByteCountHelper.parseByteCountWithRate("8GiB/s"))
+        assertEquals(ParsedByteCount(32_657_530_880, "KiB"), ByteCountHelper.parseByteCountWithRate("31892120 KiB/s"))
+
+        // Test with /sec suffix
+        assertEquals(ParsedByteCount(1_099_511_627_776, "TiB"), ByteCountHelper.parseByteCountWithRate("1 TiB/sec"))
+    }
+
+    @Test
+    fun testParseByteCountWithRateInvalidInput() {
+        // Test invalid inputs return null
+        assertEquals(ParsedByteCount(-1, "Invalid format"), ByteCountHelper.parseByteCountWithRate("invalid"))
+        assertEquals(ParsedByteCount(-1, "Invalid format"), ByteCountHelper.parseByteCountWithRate("1.0 QB/s"))
+        assertEquals(ParsedByteCount(-1, "Invalid format"), ByteCountHelper.parseByteCountWithRate(""))
     }
 }

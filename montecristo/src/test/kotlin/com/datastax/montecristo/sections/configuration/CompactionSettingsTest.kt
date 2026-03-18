@@ -16,15 +16,18 @@
 
 package com.datastax.montecristo.sections.configuration
 
+import com.datastax.montecristo.fileLoaders.parsers.application.CassandraYamlParser
 import com.datastax.montecristo.logs.Searcher
+import com.datastax.montecristo.metrics.IMetricServer
 import com.datastax.montecristo.model.Cluster
-import com.datastax.montecristo.model.ConfigSource
-import com.datastax.montecristo.model.application.ConfigValue
-import com.datastax.montecristo.model.application.ConfigurationSetting
+import com.datastax.montecristo.model.LoadError
+import com.datastax.montecristo.model.metrics.BlockedTasks
 import com.datastax.montecristo.model.profiles.ExecutionProfile
+import com.datastax.montecristo.model.schema.Schema
+import com.datastax.montecristo.model.versions.DatabaseVersion
 import com.datastax.montecristo.sections.structure.Recommendation
 import com.datastax.montecristo.sections.structure.RecommendationPriority
-import io.mockk.every
+import com.datastax.montecristo.testHelpers.ObjectCreators
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -33,14 +36,20 @@ internal class CompactionSettingsTest {
 
     @Test
     fun getDocumentNoRecsValues() {
-
-        val compactorConfigSetting = ConfigurationSetting("compaction_throughput_mb_per_sec", mapOf(Pair("node1", ConfigValue(true, "16","128"))))
-        val concurrentConfigSetting = ConfigurationSetting("concurrent_compactors", mapOf(Pair("node1", ConfigValue(true, "2","16"))))
+        val cassandraYaml = CassandraYamlParser.parse(
+            """
+            compaction_throughput_mb_per_sec: 128
+            concurrent_compactors: 16
+ 
+            """.trimIndent()
+        )
+        val node1 = ObjectCreators.createNode("node1",cassandraYaml = cassandraYaml)
+        val nodelist = listOf(node1)
+        val schema = mockk<Schema>(relaxed = true)
+        val blockedTasks = mockk<BlockedTasks>(relaxed = true)
+        val metricServer = mockk<IMetricServer>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        val cluster = mockk<Cluster>(relaxed = true)
-        every { cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16") } returns compactorConfigSetting
-        every { cluster.getSetting("concurrent_compactors", ConfigSource.CASS, "2") } returns concurrentConfigSetting
-
+        val cluster = Cluster(nodelist, false, false, DatabaseVersion.latest311(), schema, blockedTasks, metricServer, mutableListOf<LoadError>())
         val compactor = CompactionSettings()
         val recs: MutableList<Recommendation> = mutableListOf()
 
@@ -52,14 +61,20 @@ internal class CompactionSettingsTest {
 
     @Test
     fun getDocumentLowThroughputPerCompactorValues() {
-
-        val compactorConfigSetting = ConfigurationSetting("compaction_throughput_mb_per_sec", mapOf(Pair("node1", ConfigValue(true, "16","100"))))
-        val concurrentConfigSetting = ConfigurationSetting("concurrent_compactors", mapOf(Pair("node1", ConfigValue(true, "2","16"))))
+        val cassandraYaml = CassandraYamlParser.parse(
+            """
+            compaction_throughput_mb_per_sec: 100
+            concurrent_compactors: 16
+ 
+            """.trimIndent()
+        )
+        val node1 = ObjectCreators.createNode("node1",cassandraYaml = cassandraYaml)
+        val nodelist = listOf(node1)
+        val schema = mockk<Schema>(relaxed = true)
+        val blockedTasks = mockk<BlockedTasks>(relaxed = true)
+        val metricServer = mockk<IMetricServer>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        val cluster = mockk<Cluster>(relaxed = true)
-        every { cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16") } returns compactorConfigSetting
-        every { cluster.getSetting("concurrent_compactors", ConfigSource.CASS, "2") } returns concurrentConfigSetting
-
+        val cluster = Cluster(nodelist, false, false, DatabaseVersion.latest311(), schema, blockedTasks, metricServer, mutableListOf<LoadError>())
         val compactor = CompactionSettings()
         val recs: MutableList<Recommendation> = mutableListOf()
 
@@ -73,13 +88,20 @@ internal class CompactionSettingsTest {
 
     @Test
     fun getDocumentDefaultCompactionsMb() {
-        val compactorConfigSetting = ConfigurationSetting("compaction_throughput_mb_per_sec", mapOf(Pair("node1", ConfigValue(true, "16","16"))))
-        val concurrentConfigSetting = ConfigurationSetting("concurrent_compactors", mapOf(Pair("node1", ConfigValue(true, "2","2"))))
+        val cassandraYaml = CassandraYamlParser.parse(
+            """
+            compaction_throughput_mb_per_sec: 16
+            concurrent_compactors: 2
+ 
+            """.trimIndent()
+        )
+        val node1 = ObjectCreators.createNode("node1",cassandraYaml = cassandraYaml)
+        val nodelist = listOf(node1)
+        val schema = mockk<Schema>(relaxed = true)
+        val blockedTasks = mockk<BlockedTasks>(relaxed = true)
+        val metricServer = mockk<IMetricServer>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        val cluster = mockk<Cluster>(relaxed = true)
-        every { cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16") } returns compactorConfigSetting
-        every { cluster.getSetting("concurrent_compactors", ConfigSource.CASS, "2") } returns concurrentConfigSetting
-
+        val cluster = Cluster(nodelist, false, false, DatabaseVersion.latest311(), schema, blockedTasks, metricServer, mutableListOf<LoadError>())
         val compactor = CompactionSettings()
         val recs: MutableList<Recommendation> = mutableListOf()
 
@@ -93,14 +115,20 @@ internal class CompactionSettingsTest {
 
     @Test
     fun getDocumentUnthrottledCompactionsMb() {
-
-        val compactorConfigSetting = ConfigurationSetting("compaction_throughput_mb_per_sec", mapOf(Pair("node1", ConfigValue(true, "16","0"))))
-        val concurrentConfigSetting = ConfigurationSetting("concurrent_compactors", mapOf(Pair("node1",ConfigValue(true, "2", "2"))))
+        val cassandraYaml = CassandraYamlParser.parse(
+            """
+            compaction_throughput_mb_per_sec: 0
+            concurrent_compactors: 2
+ 
+            """.trimIndent()
+        )
+        val node1 = ObjectCreators.createNode("node1",cassandraYaml = cassandraYaml)
+        val nodelist = listOf(node1)
+        val schema = mockk<Schema>(relaxed = true)
+        val blockedTasks = mockk<BlockedTasks>(relaxed = true)
+        val metricServer = mockk<IMetricServer>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        val cluster = mockk<Cluster>(relaxed = true)
-        every { cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16") } returns compactorConfigSetting
-        every { cluster.getSetting("concurrent_compactors", ConfigSource.CASS, "2") } returns concurrentConfigSetting
-
+        val cluster = Cluster(nodelist, false, false, DatabaseVersion.latest311(), schema, blockedTasks, metricServer, mutableListOf<LoadError>())
         val compactor = CompactionSettings()
         val recs: MutableList<Recommendation> = mutableListOf()
 
@@ -115,21 +143,57 @@ internal class CompactionSettingsTest {
     @Test
     fun getDocumentVeryHighCompactionsMb() {
 
-        val compactorConfigSetting = ConfigurationSetting("compaction_throughput_mb_per_sec", mapOf(Pair("node1",ConfigValue(true, "16", "400"))))
-        val concurrentConfigSetting = ConfigurationSetting("concurrent_compactors", mapOf(Pair("node1", ConfigValue(true, "2","2"))))
+        val cassandraYaml = CassandraYamlParser.parse(
+            """
+            compaction_throughput_mb_per_sec: 400
+            concurrent_compactors: 2
+ 
+            """.trimIndent()
+        )
+        val node1 = ObjectCreators.createNode("node1",cassandraYaml = cassandraYaml)
+        val nodelist = listOf(node1)
+        val schema = mockk<Schema>(relaxed = true)
+        val blockedTasks = mockk<BlockedTasks>(relaxed = true)
+        val metricServer = mockk<IMetricServer>(relaxed = true)
         val searcher = mockk<Searcher>(relaxed = true)
-        val cluster = mockk<Cluster>(relaxed = true)
-        every { cluster.getSetting("compaction_throughput_mb_per_sec", ConfigSource.CASS, "16") } returns compactorConfigSetting
-        every { cluster.getSetting("concurrent_compactors", ConfigSource.CASS, "2") } returns concurrentConfigSetting
-
+        val cluster = Cluster(nodelist, false, false, DatabaseVersion.latest311(), schema, blockedTasks, metricServer, mutableListOf<LoadError>())
         val compactor = CompactionSettings()
         val recs: MutableList<Recommendation> = mutableListOf()
 
         val template = compactor.getDocument(cluster, searcher, recs, ExecutionProfile.default())
         assertThat(recs.size).isEqualTo(1)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.NEAR)
-        assertThat(recs[0].longForm).isEqualTo("The compaction throughput has been set to 400 MB/s, which is unusually high. We recommend reviewing the reason that the setting was altered to be this high.")
+        assertThat(recs[0].longForm).isEqualTo("The compaction throughput has been set to 400.0 MB/s, which is unusually high. We recommend reviewing the reason that the setting was altered to be this high.")
         assertThat(template).contains("concurrent_compactors: 2")
         assertThat(template).contains("compaction_throughput_mb_per_sec: 400")
+    }
+
+
+    @Test
+    fun getDocumentVeryHighCompactionsMbNewYamlSetting() {
+
+        val cassandraYaml = CassandraYamlParser.parse(
+            """
+            compaction_throughput: 400MB/s
+            concurrent_compactors: 2
+ 
+            """.trimIndent()
+        )
+        val node1 = ObjectCreators.createNode("node1",cassandraYaml = cassandraYaml)
+        val nodelist = listOf(node1)
+        val schema = mockk<Schema>(relaxed = true)
+        val blockedTasks = mockk<BlockedTasks>(relaxed = true)
+        val metricServer = mockk<IMetricServer>(relaxed = true)
+        val searcher = mockk<Searcher>(relaxed = true)
+        val cluster = Cluster(nodelist, false, false, DatabaseVersion.latest50(), schema, blockedTasks, metricServer, mutableListOf<LoadError>())
+        val compactor = CompactionSettings()
+        val recs: MutableList<Recommendation> = mutableListOf()
+
+        val template = compactor.getDocument(cluster, searcher, recs, ExecutionProfile.default())
+        assertThat(recs.size).isEqualTo(1)
+        assertThat(recs[0].priority).isEqualTo(RecommendationPriority.NEAR)
+        assertThat(recs[0].longForm).isEqualTo("The compaction throughput has been set to 400.0 MB/s, which is unusually high. We recommend reviewing the reason that the setting was altered to be this high.")
+        assertThat(template).contains("concurrent_compactors: 2")
+        assertThat(template).contains("compaction_throughput: 400")
     }
 }

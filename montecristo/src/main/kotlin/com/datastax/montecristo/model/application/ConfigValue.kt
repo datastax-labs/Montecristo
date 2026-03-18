@@ -16,7 +16,7 @@
 
 package com.datastax.montecristo.model.application
 
-data class ConfigValue (val isSet : Boolean, val defaultValue : String, val value : String) {
+data class ConfigValue (val isSet : Boolean, val defaultValue : String, val value : String, val units : String = "", val configSetting: String = "") {
 
     fun getConfigValue() : String {
         return if (isSet) {
