@@ -27,29 +27,30 @@ application {
     mainClass = "com.datastax.montecristo.MontecristoKt"
 }
 
-// TODO: this can be removed when we upgrade to cassandra 4.0.20 ( see CASSANDRA-21052 )
 configurations.all {
     resolutionStrategy {
         // Force secure versions of transitive dependencies from cassandra-all
-        force 'org.apache.cassandra:cassandra-all:4.0.19'
-        force 'org.lz4:lz4-java:1.8.1'  // Fixes CVE-2025-12183, CVE-2025-66566
-        force 'io.netty:netty-all:4.1.129.Final'  // Fixes multiple netty CVEs
-        force 'io.netty:netty-codec-http2:4.1.129.Final'
-        force 'io.netty:netty-codec-http:4.1.129.Final'
-        force 'io.netty:netty-handler:4.1.129.Final'
-        force 'io.netty:netty-common:4.1.129.Final'
-        force 'io.netty:netty-codec:4.1.129.Final'
-        force 'io.netty:netty-codec-smtp:4.1.129.Final'
-        force 'ch.qos.logback:logback-core:1.3.14'  // Fixes CVE-2024-12798, CVE-2025-11226 (1.3.x is last Java 8 compatible)
+        force 'org.apache.cassandra:cassandra-all:4.0.20'
+        force 'org.lz4:lz4-java:1.8.1'
+        force 'io.netty:netty-all:4.1.132.Final'
+        force 'io.netty:netty-codec-http2:4.1.132.Final'
+        force 'io.netty:netty-codec-http:4.1.132.Final'
+        force 'io.netty:netty-handler:4.1.132.Final'
+        force 'io.netty:netty-common:4.1.132.Final'
+        force 'io.netty:netty-codec:4.1.132.Final'
+        force 'io.netty:netty-codec-smtp:4.1.132.Final'
+        // logback: 1.3.x is last Java 8 compatible version (1.4+ requires Java 11)
+        force 'ch.qos.logback:logback-core:1.3.14'
         force 'ch.qos.logback:logback-classic:1.3.14'
-        force 'com.google.guava:guava:31.1-jre'  // Keep 31.1-jre for Gradle 6.8.1 compatibility (32.x has variant issues)
-        force 'org.apache.thrift:libthrift:0.20.0'  // Fixes CVE-2019-0205, CVE-2018-11798
-        force 'org.apache.httpcomponents:httpclient:4.5.14'  // Fixes CVE-2020-13956, CVE-2015-5262, WS-2017-3734
-        force 'com.fasterxml.jackson.core:jackson-core:2.15.4'  // Fixes WS-2022-0468, CVE-2025-52999
-        force 'com.fasterxml.jackson.core:jackson-databind:2.15.4'  // Fixes CVE-2022-42004, CVE-2022-42003
-        force 'com.fasterxml.jackson.core:jackson-annotations:2.15.4'
-        force 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.4'
-        force 'com.fasterxml.jackson.module:jackson-module-kotlin:2.15.4'
+        // guava: Upgrade to 33.4.0-jre (latest Java 8 compatible)
+        force 'com.google.guava:guava:33.4.0-jre'
+        force 'org.apache.thrift:libthrift:0.20.0'
+        force 'org.apache.httpcomponents:httpclient:4.5.14'
+        force 'com.fasterxml.jackson.core:jackson-core:2.18.6'
+        force 'com.fasterxml.jackson.core:jackson-databind:2.18.6'
+        force 'com.fasterxml.jackson.core:jackson-annotations:2.18.6'
+        force 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.6'
+        force 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.6'
         
         // Handle lz4-java capability conflict by selecting org.lz4 over at.yawk.lz4
         capabilitiesResolution.withCapability('org.lz4:lz4-java') {
@@ -71,21 +72,25 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.3.14'
     implementation 'ch.qos.logback:logback-core:1.3.14'
     implementation 'org.apache.commons:commons-csv:1.12.0'
-    implementation 'org.yaml:snakeyaml:2.4'  // Upgraded from 1.17, fixes CVE-2022-1471
+    implementation 'org.yaml:snakeyaml:2.4'  // Cassandra 4.0.20 supports snakeyaml 2.x
     implementation 'com.beust:jcommander:1.82'
     implementation 'com.github.spullara.mustache.java:compiler:0.9.14'
     implementation 'commons-io:commons-io:2.17.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.4"
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.4'
-    implementation 'org.apache.cassandra:cassandra-all:4.0.19'
-    implementation 'org.lz4:lz4-java:1.8.1'  // Explicitly include to override cassandra-all's transitive dependency
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
-    implementation 'commons-codec:commons-codec:1.17.2'  // Force upgrade from 1.9 (transitive from Cassandra), fixes WS-2019-0379
-    implementation 'io.netty:netty-all:4.1.129.Final'  // Force upgrade from 4.1.58.Final (transitive from Cassandra), fixes multiple CVEs
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.6'
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.18.6"
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.6'
+    implementation 'org.apache.cassandra:cassandra-all:4.0.20'
+    // Transitive dependencies from cassandra-all (versions forced by resolutionStrategy above):
+    implementation 'org.lz4:lz4-java:1.8.1'  // Transitive from cassandra-all
+    implementation 'org.apache.commons:commons-lang3:3.18.0'  // Transitive from cassandra-all
+    implementation 'commons-codec:commons-codec:1.17.2'  // Transitive from cassandra-all
+    implementation 'io.netty:netty-all:4.1.132.Final'  // Transitive from cassandra-all
     implementation 'io.netty:netty-tcnative-boringssl-static:2.0.69.Final'  // Match netty-all version for SSL support
-    implementation 'org.apache.lucene:lucene-core:7.5.0'
-    implementation 'org.apache.lucene:lucene-queryparser:7.5.0'
+    // Lucene: Transitive from cassandra-all. Upgraded to 8.11.4 (latest Java 8 compatible).
+    // Note: Lucene 8.x uses index format v10, incompatible with 7.x format v6-9.
+    // If upgrading from 7.x, delete existing Lucene indexes to rebuild.
+    implementation 'org.apache.lucene:lucene-core:8.11.4'
+    implementation 'org.apache.lucene:lucene-queryparser:8.11.4'
     implementation 'com.beust:klaxon:5.5'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-test:1.8.22'

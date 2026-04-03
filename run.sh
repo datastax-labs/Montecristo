@@ -37,6 +37,37 @@ EOF
     exit 2
 }
 
+# Check if montecristo is built (required)
+if [ ! -f "${SCRIPT_DIR}/montecristo/build/install/montecristo/bin/montecristo" ]; then
+    echo ""
+    echo "ERROR: Montecristo has not been built yet."
+    echo ""
+    echo "Please run build.sh first:"
+    echo "  ./build.sh"
+    echo ""
+    echo "For build options, run:"
+    echo "  ./build.sh -h"
+    echo ""
+    exit 1
+fi
+
+# Check if optional converters are built (warn but don't fail)
+if [ ! -f "${SCRIPT_DIR}/dse-stats-converter/build/install/dse-stats-converter/bin/dse-stats-converter" ]; then
+    echo ""
+    echo "WARNING: dse-stats-converter has not been built."
+    echo "DSE SSTable statistics conversion will not be available."
+    echo "To build it, run: ./build.sh -d /path/to/dse-tarball"
+    echo ""
+fi
+
+if [ ! -f "${SCRIPT_DIR}/old-c-stats-converter/build/install/old-c-stats-converter/bin/old-c-stats-converter" ]; then
+    echo ""
+    echo "WARNING: old-c-stats-converter has not been built."
+    echo "Old Cassandra 2.2 statistics conversion will not be available."
+    echo "To build it, run: ./build.sh"
+    echo ""
+fi
+
 #
 # Start main script execution
 #

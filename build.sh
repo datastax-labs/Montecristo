@@ -14,11 +14,13 @@
 # limitations under the License.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DSE_LIBS_DIR="${SCRIPT_DIR}/dse-stats-converter/libs"
+DSE_LIBS_DIR="${SCRIPT_DIR}/dse-stats-converter/.dse-libs"
 dse_tarball=""
 
 clean_build="false"
 run_tests="false"
+skip_dse_check="false"
+skip_old_c_check="false"
 
 # Function to find Java 8 installation
 function find_java8() {
@@ -62,6 +64,20 @@ function find_java8() {
     return 1
 }
 
+# Function to check if DSE libs are present
+function check_dse_libs() {
+    if [ ! -d "${DSE_LIBS_DIR}" ]; then
+        return 1
+    fi
+    
+    # Check for at least one required jar (dse-db-all is always needed)
+    if ! ls "${DSE_LIBS_DIR}"/dse-db-all-*.jar 1> /dev/null 2>&1; then
+        return 1
+    fi
+    
+    return 0
+}
+
 # Ensure Java 8 is available
 echo "Checking for Java 8..."
 if ! find_java8; then
@@ -102,19 +118,30 @@ DESTINATION_DIR  Optional. Directory to install binaries into.
                    old-c-stats-converter/build/install/old-c-stats-converter/
 
 Options:
- -c               Clean all build artifacts before building.
+ -c               Clean build artifacts (does not affect DSE jars).
  -d DSE_TARBALL   Path to a DSE binary tarball (e.g. dse-6.8.x-bin.tar.gz).
-                  Required jars will be extracted into dse-stats-converter/libs/.
+                  Removes old DSE jars and extracts new ones to dse-stats-converter/.dse-libs/.
+                  Use when first building or upgrading DSE versions.
+ -D               Skip building dse-stats-converter.
+                  Use when you don't need dse-stats-converter or don't have access to DSE jars.
+ -O               Skip building old-c-stats-converter.
+                  Use when you don't need old-c-stats-converter.
  -t               Run tests on all projects after building.
  -h               Help and usage.
+
+Note: DSE jars are stored in dse-stats-converter/.dse-libs/ (gitignored) and persist
+      between builds. Use '-d' to extract/update them. Build will fail with a helpful
+      message if DSE jars are missing unless '-D' is specified to skip the check.
 EOF
     exit 2
 }
 
-while getopts "cd:th" opt_flag; do
+while getopts "cd:DOth" opt_flag; do
     case $opt_flag in
         c) clean_build="true" ;;
         d) dse_tarball=$OPTARG ;;
+        D) skip_dse_check="true" ;;
+        O) skip_old_c_check="true" ;;
         t) run_tests="true" ;;
         h) usage ;;
         *) usage ;;
@@ -142,9 +169,30 @@ else
     OLD_C_STATS_INSTALL_DIR="${SCRIPT_DIR}/old-c-stats-converter/build/install/old-c-stats-converter"
 fi
 
-# Clean build artifacts if requested
+# Check if DSE libs are present before doing anything (unless -d or -D is specified)
+if [ "${skip_dse_check}" = "false" ] && [ -z "${dse_tarball}" ] && [ -f "${SCRIPT_DIR}/dse-stats-converter/build.gradle" ]; then
+    if ! check_dse_libs; then
+        echo ""
+        echo "ERROR: DSE jars not found in ${DSE_LIBS_DIR}/"
+        echo ""
+        echo "dse-stats-converter requires DSE jars to build and run."
+        echo "Extract them using:"
+        echo "  ./build.sh -d /path/to/dse-*.tar.gz"
+        echo ""
+        echo "Or skip dse-stats-converter build with:"
+        echo "  ./build.sh -D"
+        echo ""
+        echo "Example:"
+        echo "  ./build.sh -d ~/Downloads/dse-6.8.63-bin.tar.gz"
+        echo ""
+        exit 1
+    fi
+fi
+
+# Clean build artifacts if requested (never touches DSE libs)
+# When -c is specified, clean ALL projects regardless of -D or -O flags
 if [ "${clean_build}" = "true" ]; then
-    echo "Cleaning build artifacts..."
+    echo "Cleaning build artifacts for all projects..."
     pushd "${SCRIPT_DIR}/montecristo" || exit 1
     ./gradlew clean || exit 1
     popd || exit 1
@@ -160,15 +208,25 @@ if [ "${clean_build}" = "true" ]; then
         ./gradlew clean || exit 1
         popd || exit 1
     fi
-
-    # Also remove extracted DSE libs so they get re-extracted if -d is provided
-    if [ -d "${DSE_LIBS_DIR}" ]; then
-        echo "Removing ${DSE_LIBS_DIR}..."
-        rm -rf "${DSE_LIBS_DIR}"
-    fi
     echo "Clean complete."
     echo
 fi
+
+# Function to check if DSE libs are present
+function check_dse_libs() {
+    if [ ! -d "${DSE_LIBS_DIR}" ]; then
+        return 1
+    fi
+    
+    # Check for a few critical jars to verify libs are present
+    local critical_jars=("dse-db-all-*.jar" "netty-transport-*.jar" "stream-*.jar")
+    for pattern in "${critical_jars[@]}"; do
+        if ! ls "${DSE_LIBS_DIR}/"${pattern} 1> /dev/null 2>&1; then
+            return 1
+        fi
+    done
+    return 0
+}
 
 # Extract DSE jars from tarball if provided
 if [ -n "${dse_tarball}" ]; then
@@ -176,27 +234,56 @@ if [ -n "${dse_tarball}" ]; then
         echo "Error: DSE tarball not found: ${dse_tarball}"
         exit 1
     fi
+    
+    # Remove old DSE libs before extracting new ones
+    if [ -d "${DSE_LIBS_DIR}" ]; then
+        echo "Removing old DSE jars from ${DSE_LIBS_DIR}/"
+        rm "${DSE_LIBS_DIR}"/*.jar
+    fi
+    
     echo "Extracting DSE jars from ${dse_tarball} -> ${DSE_LIBS_DIR}/"
     mkdir -p "${DSE_LIBS_DIR}"
 
     # Jars needed from resources/cassandra/lib/
-    # Note: some dependencies are included (override) via `montecristo/build.gradle` 
+    # Minimal set verified by iterative testing with SSTableMetadataViewer
+    # Note: netty-all is just a POM aggregator, need all individual netty-*.jar modules
     cassandra_jars=(
-        "dse-db-all-*.jar"
-        "dse-commons-*.jar"
-        "durian-*.jar"
-        "jctools-core-*.jar"
-        "rxjava-2.*.jar"
         "agrona-*.jar"
+        "caffeine-*.jar"
+        "commons-cli-*.jar"
+        "commons-codec-*.jar"
+        "commons-io-*.jar"
+        "commons-lang3-*.jar"
+        "commons-math3-*.jar"
+        "dse-commons-*.jar"
+        "dse-db-all-*.jar"
+        "durian-*.jar"
+        "guava-*.jar"
+        "HdrHistogram-*.jar"
+        "jamm-*.jar"
+        "jctools-core-*.jar"
+        "jna-*.jar"
+        "joda-time-*.jar"
+        "logback-classic-*.jar"
+        "logback-core-*.jar"
+        "metrics-core-*.jar"
+        "netty-*.jar"
+        "reactive-streams-*.jar"
+        "rxjava-*.jar"
+        "slf4j-api-*.jar"
+        "stream-*.jar"
     )
 
     for pattern in "${cassandra_jars[@]}"; do
         # Find matching entries in the tarball
-        matches=$(tar -tzf "${dse_tarball}" | grep "resources/cassandra/lib/${pattern//\*/.*}" 2>/dev/null | head -1)
+        matches=$(tar -tzf "${dse_tarball}" | grep "resources/cassandra/lib/${pattern//\*/.*}" 2>/dev/null)
         if [ -n "${matches}" ]; then
-            echo "  Extracting: ${matches}"
-            # strip-components=4 removes: <dse-dir>/resources/cassandra/lib/ leaving just the jar filename
-            tar -xzf "${dse_tarball}" -C "${DSE_LIBS_DIR}" --strip-components=4 "${matches}"
+            # Extract all matching jars
+            while IFS= read -r match; do
+                echo "  Extracting: ${match}"
+                # strip-components=4 removes: <dse-dir>/resources/cassandra/lib/ leaving just the jar filename
+                tar -xzf "${dse_tarball}" -C "${DSE_LIBS_DIR}" --strip-components=4 "${match}"
+            done <<< "${matches}"
         else
             echo "  Warning: no match for pattern '${pattern}' in resources/cassandra/lib/"
         fi
@@ -226,45 +313,40 @@ else
 fi
 popd || exit 1
 
-if [ -f "${SCRIPT_DIR}/dse-stats-converter/build.gradle" ]; then
-    echo "Building dse-stats-converter -> ${DSE_STATS_INSTALL_DIR}"
-    pushd "${SCRIPT_DIR}/dse-stats-converter" || exit 1
-    if [ "${run_tests}" = "true" ]; then
-        gradle_cmd="./gradlew installDist test -PinstallPath=\"${DSE_STATS_INSTALL_DIR}\""
-    else
-        gradle_cmd="./gradlew installDist -x test -PinstallPath=\"${DSE_STATS_INSTALL_DIR}\""
-    fi
-    if eval ${gradle_cmd}; then
+if [ "${skip_dse_check}" = "false" ]; then
+    if [ -f "${SCRIPT_DIR}/dse-stats-converter/build.gradle" ]; then
+        echo "Building dse-stats-converter -> ${DSE_STATS_INSTALL_DIR}"
+        pushd "${SCRIPT_DIR}/dse-stats-converter" || exit 1
+        if [ "${run_tests}" = "true" ]; then
+            ./gradlew installDist test -PinstallPath="${DSE_STATS_INSTALL_DIR}" || exit 1
+        else
+            ./gradlew installDist -x test -PinstallPath="${DSE_STATS_INSTALL_DIR}" || exit 1
+        fi
         popd || exit 1
         echo "  dse-stats-converter: ${DSE_STATS_INSTALL_DIR}/bin/dse-stats-converter"
     else
-        popd || exit 1
-        echo "Warning: dse-stats-converter build failed."
-        echo "         If DSE jar files are missing, provide the DSE tarball with: ./build.sh -d /path/to/dse-*.tar.gz"
-        echo "         DSE SSTable statistics conversion will be unavailable."
+        echo "dse-stats-converter source not found, skipping."
     fi
 else
-    echo "dse-stats-converter source not found, skipping."
+    echo "Skipping dse-stats-converter build (-D specified)"
 fi
 
-if [ -f "${SCRIPT_DIR}/old-c-stats-converter/build.gradle" ]; then
-    echo "Building old-c-stats-converter -> ${OLD_C_STATS_INSTALL_DIR}"
-    pushd "${SCRIPT_DIR}/old-c-stats-converter" || exit 1
-    if [ "${run_tests}" = "true" ]; then
-        gradle_cmd="./gradlew installDist test -PinstallPath=\"${OLD_C_STATS_INSTALL_DIR}\""
-    else
-        gradle_cmd="./gradlew installDist -x test -PinstallPath=\"${OLD_C_STATS_INSTALL_DIR}\""
-    fi
-    if eval ${gradle_cmd}; then
+if [ "${skip_old_c_check}" = "false" ]; then
+    if [ -f "${SCRIPT_DIR}/old-c-stats-converter/build.gradle" ]; then
+        echo "Building old-c-stats-converter -> ${OLD_C_STATS_INSTALL_DIR}"
+        pushd "${SCRIPT_DIR}/old-c-stats-converter" || exit 1
+        if [ "${run_tests}" = "true" ]; then
+            ./gradlew installDist test -PinstallPath="${OLD_C_STATS_INSTALL_DIR}" || exit 1
+        else
+            ./gradlew installDist -x test -PinstallPath="${OLD_C_STATS_INSTALL_DIR}" || exit 1
+        fi
         popd || exit 1
         echo "  old-c-stats-converter: ${OLD_C_STATS_INSTALL_DIR}/bin/old-c-stats-converter"
     else
-        popd || exit 1
-        echo "Warning: old-c-stats-converter build failed."
-        echo "         Old Cassandra SSTable statistics conversion will be unavailable."
+        echo "old-c-stats-converter source not found, skipping."
     fi
 else
-    echo "old-c-stats-converter source not found, skipping."
+    echo "Skipping old-c-stats-converter build (-O specified)"
 fi
 
 echo
