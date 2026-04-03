@@ -1,10 +1,16 @@
 old-c-stats-converter/bin/
 old-c-stats-converter/build/
 old-c-stats-converter/.gradle/
+old-c-stats-converter/DEV_HOME_IS_UNDEFINED/
+old-c-stats-converter/old-c-stats-report.txt
+old-c-stats-converter/src/test/resources/**/*.txt
 
 dse-stats-converter/.gradle/
 dse-stats-converter/build/
+dse-stats-converter/.dse-libs/
 dse-stats-converter/libs/
+dse-stats-converter/DEV_HOME_IS_UNDEFINED/
+dse-stats-converter/dse-stats-report.txt
 
 montecristo/.gradle
 montecristo/build/
@@ -13,3 +19,5 @@ montecristo/src/main/resources/hugo.zip
 montecristo/DEV_HOME_IS_UNDEFINED/
 
 montecristo-report.txt
+
+.vscode/

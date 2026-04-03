@@ -21,7 +21,15 @@ Path to the encryption key file. Some diagnostic-collection bundles come with an
 
 ### Running Analysis with Local Artifacts
 
-To analyze artifacts from a local directory:
+**First time setup:** Build the tools before running analysis:
+
+    ./build.sh
+
+For DSE statistics conversion support, provide a DSE 6.8.x tarball:
+
+    ./build.sh -d /path/to/dse-6.8.x-bin.tar.gz
+
+Then analyze artifacts from a local directory:
 
     # Copy artifacts from local directory
     ./run.sh -c /path/to/local/artifacts $ISSUE_FOLDER $ENCRYPTION_KEY_PATH
@@ -144,11 +152,14 @@ These instructions tested on new/clean Windows install using WSL2 running Ubuntu
 5. jq should be installed
    * On Ubuntu: `sudo apt install jq`
    * On OSX: `brew install jq`
-6. To enable the conversion and reading of Datastax Enterprise sstablemetadata files, download IBM DataStax Enterprise from [IBM Fix Central](https://www.ibm.com/support/fixcentral/options?selectionBean.selectedTab=find&selection=ibm%2fInformation+Management%3bibm%2fInformation+Management%2fIBM+DataStax+Enterprise) and use the `-d` flag with `build.sh` to automatically extract the required jars from the DSE tarball:
+6. To enable the conversion and reading of Datastax Enterprise sstablemetadata files, download IBM DataStax Enterprise **version 6.8.x** from [IBM Fix Central](https://www.ibm.com/support/fixcentral/options?selectionBean.selectedTab=find&selection=ibm%2fInformation+Management%3bibm%2fInformation+Management%2fIBM+DataStax+Enterprise) and use the `-d` flag with `build.sh` to automatically extract the required jars from the DSE tarball:
    ```bash
    ./build.sh -d /path/to/dse-6.8.x-bin.tar.gz
    ```
-   This will extract the following jars from the DSE tarball into `dse-stats-converter/libs/`:
+   
+   **IMPORTANT:** Only DSE 6.8.x versions are supported. DSE 6.9 and later require Java 11, which is incompatible with this project's Java 8 requirement.
+   
+   This will extract the required jars from the DSE tarball into `dse-stats-converter/.dse-libs/`:
    * agrona-*.jar
    * dse-commons-*.jar
    * dse-db-all-*.jar

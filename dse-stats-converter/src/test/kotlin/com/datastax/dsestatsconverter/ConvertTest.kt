@@ -16,24 +16,53 @@
 
 package com.datastax.dsestatsconverter
 
-import org.junit.Ignore
 import org.junit.Test
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.test.assertTrue
 
 internal class ConvertTest() {
 
-    // This test is not part of the test suite, it is designed for local debugging.
-    // The @ignore is there to make sure it does not get included in a test suite for build purposes, the files / folder
-    // it is debugging will not be in the repo. To run the actual test for debugging, comment the @Ignore out
     @Test
-    @Ignore
-    fun runConvert() {
-        // root directory
-        val jira = "some-test"
-        val homeFolder = System.getProperty("user.home")
-        val rootDirectory = "$homeFolder/ds-discovery/$jira"
-
-        val p = java.nio.file.Paths.get(rootDirectory).toAbsolutePath()
-        Convert().execute(p.toString())
+    fun testConvertWithSharedTestFiles() {
+        // Use shared test Statistics.db files from montecristo module
+        val projectRoot = Paths.get("").toAbsolutePath().parent
+        val testFilesPath = projectRoot.resolve("montecristo/src/test/resources/fileLoaders/parsers/sstable-statistics")
+        
+        // Create output directory in build/test-output
+        val outputDir = Paths.get("build/test-output/sstable-statistics").toFile()
+        outputDir.mkdirs()
+        
+        // Find all Statistics.db files
+        val statisticsFiles = File(testFilesPath.toString())
+            .walkTopDown()
+            .filter { it.name.endsWith("-Statistics.db") }
+            .toList()
+        
+        assertTrue(statisticsFiles.isNotEmpty(), "Should find at least one Statistics.db file")
+        
+        // Copy Statistics.db files to output directory, preserving directory structure
+        val copiedFiles = statisticsFiles.map { dbFile ->
+            val relativePath = testFilesPath.relativize(dbFile.toPath())
+            val targetFile = outputDir.toPath().resolve(relativePath).toFile()
+            targetFile.parentFile.mkdirs()
+            Files.copy(dbFile.toPath(), targetFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            targetFile
+        }
+        
+        // Process the Statistics.db files in the output directory
+        Convert().execute(outputDir.absolutePath)
+        
+        // Verify that .txt files were created for each Statistics.db file
+        copiedFiles.forEach { dbFile ->
+            val txtFile = File(dbFile.absolutePath.substringBeforeLast(".") + ".txt")
+            assertTrue(
+                txtFile.exists() && txtFile.length() > 0,
+                "Expected output file ${txtFile.name} to exist and be non-empty. " +
+                "If this fails, check that all required DSE jars are present in .dse-libs/ directory."
+            )
+        }
     }
 
 }

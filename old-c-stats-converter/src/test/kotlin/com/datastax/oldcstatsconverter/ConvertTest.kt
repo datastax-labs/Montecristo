@@ -21,12 +21,26 @@ import org.junit.Test
 
 internal class ConvertTest() {
 
+    // This test uses a Statistics.db file from test resources
+    @Test
+    fun runConvertWithTestResource() {
+        // Get the test resource file
+        val resourceUrl = javaClass.classLoader.getResource("la-1-big-Statistics.db")
+        require(resourceUrl != null) { "Test resource file not found" }
+        
+        val testFile = java.io.File(resourceUrl.toURI())
+        require(testFile.exists()) { "Test file does not exist: ${testFile.absolutePath}" }
+        
+        // Run the converter on the file (converter will find it in the directory)
+        Convert().execute(testFile.absolutePath)
+    }
+
     // This test is not part of the test suite, it is designed for local debugging.
-    // The @ignore is there to make sure it does not get included in a test suite for build purposes, the files / folder
+    // The @Ignore is there to make sure it does not get included in a test suite for build purposes, the files / folder
     // it is debugging will not be in the repo. To run the actual test for debugging, comment the @Ignore out
     @Test
     @Ignore
-    fun runConvert() {
+    fun runConvertWithCustomPath() {
         // root directory
         val jira = "some-test"
         val homeFolder = System.getProperty("user.home")
