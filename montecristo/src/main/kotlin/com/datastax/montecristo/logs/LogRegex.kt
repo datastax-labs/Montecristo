@@ -51,17 +51,25 @@ data class LogRegex(val regex: Regex, val groupMappings: Map<LogEntryGroupings, 
                 val potentialRegex = logbackPattern
                     .replace("%-5level", "(\\w+)")
                     .replace("[%thread]", "\\[.*?]")
-                    .replace("%date{ISO8601}", "([^,]*),\\d*")
+                    .replace(Regex("%date\\{[^}]*\\}"), "([^.,]+)(?:[.,][a-zA-Z_0-9]+)?")
                     .replace("%X{service}", "" ) // becomes a part of the message
                     .replace("%F:%L - %msg%n", "(.*)")
                     .replace("%F:%L %M %msg%n", "(.*)")
                     .replace("%marker", "") // becomes part of the message
                     .replace(" ","\\s*")
 
-                // now need to understand, the order of the groupings
-                val levelPosition = potentialRegex.substringBefore("(\\w+)").filter { it == '('}.count() + 1
-                val datePosition = potentialRegex.substringBefore("([^,]*),\\d*").filter { it == '('}.count() + 1
-                val messagePosition = potentialRegex.substringBefore( "(.*)").filter { it == '('}.count() + 1
+                // Work out the order (1-based index) of the capturing groups. We count the
+                // opening parens that precede each group's marker, skipping the non-capturing
+                // "(?:...)" group introduced by the optional sub-second fraction of the date.
+                val levelPosition = potentialRegex.substringBefore("(\\w+)")
+                    .filterIndexed { i, ch -> ch == '(' && !potentialRegex.startsWith("(?:", i)}.count() + 1
+
+                val datePosition = potentialRegex.substringBefore("([^.,]+)")
+                    .filterIndexed { i, ch -> ch == '(' && !potentialRegex.startsWith("(?:", i)}.count() + 1
+
+                val messagePosition = potentialRegex.substringBefore( "(.*)")
+                    .filterIndexed { i, ch -> ch == '(' && !potentialRegex.startsWith("(?:", i)}.count() + 1
+
                 val groupMappings = mapOf(
                     LogEntryGroupings.LEVEL to levelPosition,
                     LogEntryGroupings.DATE to datePosition,
