@@ -79,7 +79,6 @@ class JavaHeapConfiguration : DocumentSection {
                 """.trimIndent()
                 )
             }
-            println("${cluster.nodes.first().osConfiguration.memInfo.memTotal} total memory")
             if (parsedJvmSettings.heapSize < 8_000_000_000 && ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kB") >= 30_000_000_000) {
                 // Heap size is too small
                 recs.immediate(RecommendationType.CONFIGURATION,"Your heap size is too small (${ByteCountHelper.humanReadableByteCount(parsedJvmSettings.heapSize, ByteCountHelperUnits.BINARY)})." +
@@ -92,10 +91,6 @@ class JavaHeapConfiguration : DocumentSection {
 
         } else {
             // G1GC recommendations
-            if (ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kB") < 40_000_000_000) {
-                // Available RAM is too small for G1
-                recs.immediate(RecommendationType.CONFIGURATION,"G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently do not have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
-            }
             if (ByteCountHelper.parseHumanReadableByteCountToLong("${cluster.nodes.first().osConfiguration.memInfo.memTotal} kB") >= 40_000_000_000 && parsedJvmSettings.heapSize < 20_000_000_000) {
                 // Available RAM is too small for G1
                 recs.immediate(RecommendationType.CONFIGURATION,"G1 ideally requires at least 20GiB of heap space to perform efficiently. We recommend increasing your heap size to value between 20GiB and 31GiB to maximize its performance.")

@@ -28,6 +28,10 @@ class DseV51x(versionIdentifier: String) : CassandraV311x(versionIdentifier) {
         return DatabaseVersion.latestDSE51()
     }
 
+    override fun defaultDclocalReadRepairChance(): Double {
+        return 0.1
+    }
+
     override fun supportsCredentialValiditySetting(): Boolean {
         return true
     }

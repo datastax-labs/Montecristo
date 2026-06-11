@@ -19,9 +19,6 @@ package com.datastax.montecristo.model.versions.cassandra
 import com.datastax.montecristo.model.versions.DatabaseVersion
 
 abstract class CassandraV4x (versionIdentifier: String) : Cassandra(versionIdentifier)  {
-    override fun supportsReadRepair(): Boolean {
-        return false
-    }
     override fun supportsThrift(): Boolean {
         return false
     }

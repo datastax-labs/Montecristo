@@ -39,6 +39,10 @@ class CassandraV1x (versionIdentifier: String) : Cassandra(versionIdentifier)  {
         return "EstimatedRowCount"
     }
 
+    override fun supportsReadRepairChance(): Boolean {
+        return true
+    }
+
     override fun searchLogForLargePartitionWarnings(searcher : Searcher, queryLimit : Int) : List<LogEntry> {
         return searcher.search("""message:(+"large row\")""", LogLevel.WARN, queryLimit)
     }

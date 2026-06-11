@@ -31,6 +31,9 @@ class CassandraV21x (versionIdentifier: String) : Cassandra(versionIdentifier)  
     override fun estimatedRowCountMetricName(): String {
         return "EstimatedRowCount"
     }
+    override fun supportsReadRepairChance(): Boolean {
+        return true
+    }
     override fun parseLargePartitionSizeMessage(messages: List<String>): List<Pair<String, Long>> {
         return super.parseOldLargePartitionSizeMessage(messages, "partition ([\\w]+[\\/]+[\\w.]+:[\\w:\\-_]+) [\\(]+([0-9]+) bytes[\\)]+")
     }

@@ -43,6 +43,8 @@ interface DatabaseVersion {
     fun estimatedRowCountMetricName() : String
     fun lcsDefaultSSTableSize() : String
     fun lcsDefaultFanOutSize() : String
+    fun defaultDclocalReadRepairChance() : Double
+    fun supportsReadRepairChance() : Boolean
 
     fun searchLogForTombstones(searcher : Searcher, queryLimit : Int) : List<TombstoneWarningMessage>
     fun parseLargePartitionSizeMessage(message : List<String>) : List<Pair<String,Long>>
@@ -55,7 +57,6 @@ interface DatabaseVersion {
 
     fun isLatestMajorRelease() : Boolean
 
-    fun supportsReadRepair(): Boolean
     fun supportsVNodes() : Boolean
     fun supportsCredentialValiditySetting() : Boolean
     fun supportsOffHeapMemtables(): Boolean

@@ -19,6 +19,9 @@ package com.datastax.montecristo.model.versions.cassandra
 import com.datastax.montecristo.model.versions.DatabaseVersion
 
 open class CassandraV3x (versionIdentifier: String) : Cassandra(versionIdentifier)  {
+    override fun supportsReadRepairChance(): Boolean {
+        return true
+    }
     override fun supportsOffHeapMemtables(): Boolean {
         return false
     }

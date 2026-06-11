@@ -20,6 +20,12 @@ import com.datastax.montecristo.model.versions.cassandra.Cassandra
 
 abstract class Dse6Base(versionIdentifier: String) : Cassandra(versionIdentifier) {
 
+    // read_repair_chance / dclocal_read_repair_chance table options remained available
+    // in DSE 6.0 and 6.7; they were removed in DSE 6.8 (see DseV68X / DseV69X).
+    override fun supportsReadRepairChance(): Boolean {
+        return true
+    }
+
     override fun supportsThrift(): Boolean {
         return false
     }

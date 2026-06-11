@@ -34,6 +34,12 @@ class CassandraV30x  (versionIdentifier: String) : Cassandra(versionIdentifier) 
     override fun recommendedOSSettingsLink(): String {
         return  "https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/install/installRecommendSettings.html"
     }
+    override fun defaultDclocalReadRepairChance(): Double {
+        return if (versionString.substringAfterLast(".").toInt() < 17) 0.1 else 0.0
+    }
+    override fun supportsReadRepairChance(): Boolean {
+        return true
+    }
     override fun parseLargePartitionSizeMessage(messages: List<String>): List<Pair<String, Long>> {
         return super.parseOldLargePartitionSizeMessage(messages, "partition ([\\w]+[\\/]+[\\w.]+:[\\w:\\-_]+) [\\(]+([0-9]+) bytes[\\)]+")
     }

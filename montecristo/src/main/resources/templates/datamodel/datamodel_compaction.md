@@ -29,17 +29,16 @@ The compaction strategies used in this cluster (k = thousand, M = million, B = b
 
 {{tables}}
 
-{{#toUCS}}
-
-We recommend changing the compaction strategy to `UnifiedCompactionStrategy`:
-
-{{toUCS}}
-
-{{/toUCS}}
-
 {{#toSTCS}}
 
+{{#hasUCS}}
+
+<br>
+The following tables should be using `UnifiedCompactionStrategy` and probably benefit from `T` (tiered compaction) `scaling_parameters` configuration:
+{{/hasUCS}}
+{{^hasUCS}}
 We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, otherwise evaluate the following tables to use `SizeTieredCompactionStrategy`:
+{{/hasUCS}}
 
 {{toSTCS}}
 
@@ -47,7 +46,14 @@ We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, ot
 
 {{#toLCS}}
 
+{{#hasUCS}}
+
+<br>
+The following tables should be using `UnifiedCompactionStrategy` and probably benefit from `L` (leveled compaction) `scaling_parameters` configuration:
+{{/hasUCS}}
+{{^hasUCS}}
 We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, otherwise evaluate the following tables to use `LeveledCompactionStrategy`:
+{{/hasUCS}}
 
 {{toLCS}}
 
@@ -55,7 +61,14 @@ We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, ot
 
 {{#toTWCS}}
 
+{{#hasUCS}}
+
+<br>
+The following tables should be using `UnifiedCompactionStrategy` and probably benefit from `T` (tiered compaction tailored for time-series) `scaling_parameters` configuration:
+{{/hasUCS}}
+{{^hasUCS}}
 We recommend upgrading to HCD or >=5.0 and using UCS on the following tables, otherwise evaluate the opportunity for the following tables to use `TimeWindowCompactionStrategy` as they have been identified as potential time series or are currently using the deprecated `DateTieredCompactionStrategy`:
+{{/hasUCS}}
 
 {{toTWCS}}
 

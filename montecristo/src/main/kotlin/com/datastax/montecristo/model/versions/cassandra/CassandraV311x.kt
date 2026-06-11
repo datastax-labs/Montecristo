@@ -26,6 +26,14 @@ open class CassandraV311x (versionIdentifier: String) : Cassandra(versionIdentif
         return DatabaseVersion.latest311()
     }
 
+    override fun defaultDclocalReadRepairChance(): Double {
+        return if (versionString.substringAfterLast(".").toInt() < 3) 0.1 else 0.0
+    }
+
+    override fun supportsReadRepairChance(): Boolean {
+        return true
+    }
+
     override fun recommendedOSSettingsLink(): String {
         return "https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/install/installRecommendSettings.html"
     }

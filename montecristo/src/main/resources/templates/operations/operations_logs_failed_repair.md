@@ -17,7 +17,7 @@ There are {{numWarnings}} failed repair messages in the logs.
 {{/numWarnings}}
 {{/hitLimit}}
 
-Repairs can fail for a variety of reasons, the most common cause is that a node has not responded within the timeout period, causing the repair to fail. These repair failure messages can not provide the root cause, since it is not clear to the node repairing, why the other node did not respond.
+Repairs can fail for a variety of reasons, the most common cause is that a node has not responded within the timeout period, causing the repair to fail. These repair failure messages can not provide the root cause, since it is not clear to the node repairing why the other node did not respond.
 
 {{^numWarnings}}
 There were no failed repairs within the logs.

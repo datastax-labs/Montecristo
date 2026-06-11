@@ -132,9 +132,31 @@ internal class ReadRepairTest {
         val readRepair = ReadRepair()
         val recs: MutableList<Recommendation> = mutableListOf()
 
+        // When nothing is specified the version default applies. On the latest 3.11 the default
+        // dclocal_read_repair_chance is 0.0, so no read repair is in use and nothing is recommended.
         readRepair.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(1)
-        assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
-        assertThat(recs[0].longForm).contains("Tables are using dc local read repair." )
+        assertThat(recs.size).isEqualTo(0)
+    }
+
+    @Test
+    fun getDocumentNotSupportedReturnsEmptyAndNoRecommendations() {
+
+        val table = mockk<Table>(relaxed = true)
+        every { table.name } returns "test_table1"
+        every { table.dcLocalReadRepair } returns "0.1"
+        every { table.readRepair } returns "0.1"
+
+        val tables = listOf(table)
+        val searcher = mockk<Searcher>(relaxed = true)
+        val cluster = mockk<Cluster>(relaxed = true)
+        every { cluster.schema.tables } returns tables
+        // 5.0 removed read_repair_chance entirely - the section is skipped and must not emit recommendations.
+        every { cluster.databaseVersion } returns DatabaseVersion.latest50()
+        val readRepair = ReadRepair()
+        val recs: MutableList<Recommendation> = mutableListOf()
+
+        val result = readRepair.getDocument(cluster, searcher, recs, ExecutionProfile.default())
+        assertThat(result).isEmpty()
+        assertThat(recs.size).isEqualTo(0)
     }
 }

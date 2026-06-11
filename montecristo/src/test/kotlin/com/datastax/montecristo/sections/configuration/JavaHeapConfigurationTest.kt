@@ -227,11 +227,9 @@ internal class JavaHeapConfigurationTest {
         val recs: MutableList<Recommendation> = mutableListOf()
 
         jvm.getDocument(cluster, searcher, recs, ExecutionProfile.default())
-        assertThat(recs.size).isEqualTo(2)
+        assertThat(recs.size).isEqualTo(1)
         assertThat(recs[0].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
-        assertThat(recs[0].longForm).isEqualTo("G1 ideally requires at least 20GiB of heap space to perform efficiently and you currently do not have enough RAM to use such heap sizes. We recommend using CMS instead which usually performs better than G1 when tuned appropriately.")
-        assertThat(recs[1].priority).isEqualTo(RecommendationPriority.IMMEDIATE)
-        assertThat(recs[1].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
+        assertThat(recs[0].longForm).isEqualTo("Check the recommended G1GC jvm flags are used as found in [Apache Cassandra 5.0 configuration](https://github.com/apache/cassandra/blob/cassandra-5.0.4/conf/jvm11-server.options#L61-L93).")
     }
 
     @Test

@@ -18,14 +18,18 @@ Compactions exceeding this limit trigger a log message that looks similar to:
 WARN  [CompactionExecutor:787] 2017-11-27 15:46:46,132 SSTableWriter.java:240 - Compacting large partition keyspace/table:<primary_key> (148802470 bytes)
 ```
 {{#largePartitionsWarningsByTable}}
+
+<br>
 Warnings by Table:
 
 {{largePartitionsWarningsByTable}}
 
+<br>
 Warnings by Date:
 
 {{largePartitionsWarningsByDate}}
 
+<br>
 Largest Warning per Table:
 
 {{largestPartitionsPerTable}}
@@ -34,6 +38,7 @@ Largest Warning per Table:
 No large partition warnings have been found within the logs.
 {{/largePartitionsWarningsByTable}}
 
+<br>
 {{software}} tracks statistics on partition sizes internally in addition to logs.
 
 {{largePartitionsTableFromMetrics}}
