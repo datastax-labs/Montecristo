@@ -47,7 +47,7 @@ class UnusedTables : DocumentSection {
         }
 
         if (cluster.schema.getUserTables().count() > 300) {
-            recs.near(RecommendationType.INFRASTRUCTURE, "There are too many tables in this cluster.  Make preparations for separate clusters, focusing on separating operational converns and business domains.")
+            recs.near(RecommendationType.INFRASTRUCTURE, "There are too many tables in this cluster.  Make preparations for separate clusters, focusing on separating operational concerns and business domains.")
         }
 
         if(unused.count() > 0) {

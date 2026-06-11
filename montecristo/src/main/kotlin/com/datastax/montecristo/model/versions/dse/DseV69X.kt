@@ -8,7 +8,7 @@ import com.datastax.montecristo.model.logs.LogLevel
 import com.datastax.montecristo.model.versions.DatabaseVersion
 
 class DseV69X(versionIdentifier: String) : Dse6Base(versionIdentifier) {
-    override fun supportsReadRepair(): Boolean {
+    override fun supportsReadRepairChance(): Boolean {
         return false
     }
     override fun isSupported(): Boolean {

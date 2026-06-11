@@ -8,7 +8,7 @@ When the database detects this, {{software}} issues a warning into the logs that
 WARN  [ScheduledTasks:1] 2020-11-02 11:20:24,835 QueryProcessor.java:148 - 123 prepared statements discarded in the last minute because cache limit reached (125 MB)
 ````
 
-The query cache can be inspected by querying the `system.prepared_statements` table with CQL, queries that appear with literal values are not prepared correctly and should be corrected within the application code.
+The query cache can be inspected by querying the `system.prepared_statements` table with CQL; queries that appear with literal values are not prepared correctly and should be corrected within the application code.
 
 {{#warningsByDateTable.empty}}
 No prepared statement discard warnings detected.

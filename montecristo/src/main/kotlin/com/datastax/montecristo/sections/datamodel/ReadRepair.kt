@@ -36,12 +36,16 @@ class ReadRepair : DocumentSection {
 
         val args = super.createDocArgs(cluster)
 
-        if (!cluster.databaseVersion.supportsReadRepair()) {
+        // read_repair_chance / dclocal_read_repair_chance were removed in Cassandra 4.0 and DSE 6.8.
+        // On those (and later, e.g. 5.0) versions there is nothing to report and no recommendation to make,
+        // so bail out before computing any recommendations - otherwise they would leak into the report.
+        if (!cluster.databaseVersion.supportsReadRepairChance()) {
             return ""
         }
 
+        val defaultDcLocalReadRepairChance = cluster.databaseVersion.defaultDclocalReadRepairChance()
         val nonZeroRrTables = cluster.schema.tables
-            .filter { table -> table.readRepair.toDoubleOrNull() ?: 0.0  != 0.0 || table.dcLocalReadRepair.toDoubleOrNull()?: 0.1  != 0.0 }
+            .filter { table -> table.readRepair.toDoubleOrNull() ?: 0.0  != 0.0 || table.dcLocalReadRepair.toDoubleOrNull() ?: defaultDcLocalReadRepairChance != 0.0 }
 
         var tablesUsingGlobalRR = 0
         var tablesUsingDCRR = 0
@@ -52,7 +56,7 @@ class ReadRepair : DocumentSection {
             if (it.readRepair.toDoubleOrNull() ?: 0.0 > 0.0) {
                 tablesUsingGlobalRR++
             }
-            if (it.dcLocalReadRepair.toDoubleOrNull()?: 0.1  > 0.0) {
+            if (it.dcLocalReadRepair.toDoubleOrNull() ?: defaultDcLocalReadRepairChance > 0.0) {
                 tablesUsingDCRR++
             }
         }
@@ -68,6 +72,7 @@ class ReadRepair : DocumentSection {
         }
 
         args["repairTable"] = md.toString()
+        args["defaultDclocalReadRepairChance"] = defaultDcLocalReadRepairChance
 
         return compileAndExecute("datamodel/datamodel_readrepair.md", args)
     }

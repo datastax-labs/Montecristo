@@ -29,6 +29,6 @@ class CassandraV50x (versionIdentifier: String) : Cassandra(versionIdentifier)  
     }
 
     override fun supportsUcs(): Boolean {
-        return false
+        return true
     }
 }

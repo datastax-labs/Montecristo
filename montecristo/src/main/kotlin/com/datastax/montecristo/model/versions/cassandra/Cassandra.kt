@@ -25,10 +25,6 @@ import com.datastax.montecristo.model.versions.DatabaseVersion
 
 abstract class Cassandra(val versionString: String) : DatabaseVersion {
 
-    override fun supportsReadRepair(): Boolean {
-        return true
-    }
-
     override fun supportsVNodes(): Boolean {
         return true
     }
@@ -83,6 +79,14 @@ abstract class Cassandra(val versionString: String) : DatabaseVersion {
 
     override fun lcsDefaultFanOutSize(): String {
         return "10"
+    }
+
+    override fun defaultDclocalReadRepairChance(): Double {
+        return if (supportsReadRepairChance()) 0.1 else 0.0
+    }
+
+    override fun supportsReadRepairChance(): Boolean {
+        return false
     }
 
     override fun searchLogForLargePartitionWarnings(searcher : Searcher, queryLimit : Int) : List<LogEntry> {
